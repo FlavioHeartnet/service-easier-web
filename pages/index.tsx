@@ -2,8 +2,14 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.scss'
 import {Form, Button, Input} from 'semantic-ui-react'
+import { useState } from 'react'
 
 export default function Home() {
+  const [isLoading, setLoading] = useState(false)
+  function login(){
+    setLoading(true)
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -20,13 +26,14 @@ export default function Home() {
         <p className={styles.description}>
           Faça seu login aqui!
         </p>  
-      <Form> 
+      <Form onSubmit={login}> 
       <Form.Field
         id='form-input-control-last-name'
         control={Input}
         label='E-mail'
         placeholder='Digite seu E-mail'
         type='email'
+        required
       />
       <Form.Field
         id='form-input-control-last-name'
@@ -34,8 +41,10 @@ export default function Home() {
         label='Senha'
         placeholder='Digite sua Senha'
         type='password'
+        required
       />
-      <Button primary>Entrar</Button>
+      <Button loading={isLoading} primary>Entrar</Button>
+      <Button type={'button'}>Não tem acesso? cadastre-se</Button>
       </Form>
 
       </main>
