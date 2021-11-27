@@ -5,6 +5,8 @@ import {useRouter} from 'next/router'
 import { useEffect } from "react";
 import Header from './../components/header'
 import {Container} from 'semantic-ui-react'
+import Cards from './../components/cards'
+import HomeChart from './../components/homechart'
 export default function Home(){
     const router = useRouter()
     useEffect(()=>{
@@ -17,13 +19,19 @@ export default function Home(){
           });
     })
     return (
-        <div>
-            <Header />
-            <Container>
-                <br/>
-                <h1>Home</h1>
-            </Container>
-            
+        <>
+        <Header />
+        <div className={styles.container}>
+            <div className={styles.backgroung}/>
         </div>
+            
+        <Container>
+        <br/><br/>
+                <Cards/>
+                <br/><br/>
+                <HomeChart/>
+            </Container>
+            <br/>
+        </>
     )
 }

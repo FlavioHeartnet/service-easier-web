@@ -16,11 +16,11 @@ export default function Header(props){
             console.log(error)
         })
     }
-    return (<div>
+    return (<div className={styles.container}>
         <Menu fixed='top' secondary>
         <Menu.Item><b>Service Easier</b></Menu.Item>
         <Menu.Item onClick={()=> handleroute('/home')}><b>Home</b></Menu.Item>
-        <Menu.Item onClick={logout} position='right'>Sair</Menu.Item>
+        <Menu.Item onClick={logout} position='right'><b>Sair</b></Menu.Item>
         </Menu>
     </div>)
 }
