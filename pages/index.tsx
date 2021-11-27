@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styles from '../styles/Login.module.scss'
-import {Form, Button, Message, Segment} from 'semantic-ui-react'
+import {Form, Button, Message, Segment, Modal} from 'semantic-ui-react'
 import { useState } from 'react'
 import {auth, GoogleProvider} from './../firebase'
 import { signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider } from "firebase/auth";
@@ -25,18 +25,11 @@ export default function Login() {
     signInWithPopup(auth, GoogleProvider)
     .then((result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
+      //const credential = GoogleAuthProvider.credentialFromResult(result);
       router.push('/home')
     }).catch((error) => {
       // Handle Errors here.
       const errorMessage = localizeErrorMap(error);
-      // The email of the user's account used.
-      const email = error.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
       setFormSucess({
         error: true
     })
@@ -52,16 +45,12 @@ export default function Login() {
   function login(){
     setLoading(true)
     signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
+  .then(() => {
     setLoading(false)
-    const user = userCredential.user;
     router.push('/home')
   })
   .catch((error) => {
-    const errorCode = error.code;
     const errorMessage = localizeErrorMap(error)
-    
-
     setFormSucess({
       error: true
   })
@@ -109,7 +98,12 @@ export default function Login() {
       <div className={styles.buttons}>
         <Button loading={isLoading} primary>Entrar</Button>
         <Button type={'button'} color='red' onClick={loginGoogle}>Entrar com Google</Button>
-        <Button type={'button'}>Não tem acesso? cadastre-se</Button>
+        <Modal
+          trigger={<Button type={'button'}>Não tem acesso?</Button>}
+          header='Em breve será sua vez :)'
+          content='Este projeto ainda esta em fase beta por isso apenas algumas pessoas podem usar-lo no momento, mas não se preocupe no futuro proximo ele estará disponivel para você'
+          actions={[{ key: 'done', content: 'Entendi', positive: true }]}
+        />
       </div>
       </Form>
       </Segment>
