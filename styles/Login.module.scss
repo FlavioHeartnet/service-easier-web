@@ -1,5 +1,11 @@
 .container {
-  padding: 0 2rem;
+  background-image: url('./../public/background.jpg');
+  background-size: cover;
+  background-color: #4d4d4d;
+  background-blend-mode: overlay;
+  .backgroung{
+    background-image: linear-gradient(white, rgba(0,0,0,0.5));
+  }
 }
 
 .main {
@@ -10,6 +16,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .logincard{
+    background-color: white;
+    
+  }
   .title a {
     color: #0070f3;
     text-decoration: none;
@@ -63,4 +74,9 @@
 .logo {
   height: 1em;
   margin-left: 0.5rem;
+}
+.buttons{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
