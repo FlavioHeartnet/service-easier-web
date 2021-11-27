@@ -74,7 +74,7 @@ export default function Login() {
       </Head>
 
       <main className={styles.main}>
-        <Segment raised>
+        
         <h1 className={styles.title}>
           Service Easier <br/><a href="">Gestão de Serviços!</a>
         </h1>
@@ -106,7 +106,7 @@ export default function Login() {
         />
       </div>
       </Form>
-      </Segment>
+      
       </main>
 
       <footer className={styles.footer}>
