@@ -1,4 +1,16 @@
 .container{
+    
+        background-image: url('./../public/homebanner.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #4d4d4d;
+        background-blend-mode: overlay;
+        min-height: 25vh;
+        
+        .backgroung{
+            min-height: 25vh;
+            background-image: linear-gradient(rgba(0,0,0,0.5),white);
+        }
     b {
         color: white;
     }

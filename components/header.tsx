@@ -20,7 +20,11 @@ export default function Header(props){
         <Menu fixed='top' secondary>
         <Menu.Item><b>Service Easier</b></Menu.Item>
         <Menu.Item onClick={()=> handleroute('/home')}><b>Home</b></Menu.Item>
+        <Menu.Item onClick={()=> handleroute('/addservice')}><b>Lançar serviços</b></Menu.Item>
         <Menu.Item onClick={logout} position='right'><b>Sair</b></Menu.Item>
         </Menu>
+        <div className={styles.container}>
+            <div className={styles.backgroung}/>
+        </div>
     </div>)
 }

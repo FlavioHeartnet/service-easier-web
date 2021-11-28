@@ -21,10 +21,6 @@ export default function Home(){
     return (
         <>
         <Header />
-        <div className={styles.container}>
-            <div className={styles.backgroung}/>
-        </div>
-            
         <Container>
         <br/><br/>
                 <Cards/>
