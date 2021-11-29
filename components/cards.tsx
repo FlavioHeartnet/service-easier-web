@@ -7,7 +7,7 @@ export default function Cards(){
           description:
             '25',
           meta: 'Números de serviços prestados a clientes.',
-          color: 'blue',
+          color: 'pink',
           fluid: true
         },
         {
@@ -15,7 +15,7 @@ export default function Cards(){
           description:
             'R$ 500,00',
           meta: 'Valores atualizados sem o desconto de comissão.',
-          color: 'orange',
+          color: 'pink',
           fluid: true
         },
         {
@@ -23,7 +23,7 @@ export default function Cards(){
           description:
             'R$ 250,00',
           meta: 'Valores a serem recebidos no dia 15/12/2021',
-          color: 'green',
+          color: 'pink',
           fluid: true
         },
       ]
@@ -31,7 +31,7 @@ export default function Cards(){
 
     return(
         <div>
-            <Card.Group centered items={items} />
+            <Card.Group doubling itemsPerRow='3' centered items={items} />
         </div>
     )
 }

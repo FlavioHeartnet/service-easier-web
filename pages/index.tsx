@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styles from '../styles/Login.module.scss'
-import {Form, Button, Message, Segment, Modal} from 'semantic-ui-react'
+import {Form, Button, Message, Segment, Container,Modal} from 'semantic-ui-react'
 import { useState } from 'react'
 import {auth, GoogleProvider} from './../firebase'
 import { signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider } from "firebase/auth";
@@ -72,7 +72,8 @@ export default function Login() {
         <meta name="description" content="Aqui você pode organizar seus serviços" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
+      <Container>
+        <Segment>
       <main className={styles.main}>
         
         <h1 className={styles.title}>
@@ -108,7 +109,8 @@ export default function Login() {
       </Form>
       
       </main>
-
+      </Segment>
+      </Container>
       <footer className={styles.footer}>
         <a
           href="https://portifolio-284f2.web.app/#home"

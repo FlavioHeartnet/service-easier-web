@@ -17,10 +17,12 @@ export default function Header(props){
         })
     }
     return (<div className={styles.container}>
-        <Menu fixed='top' secondary>
+        <Menu fixed='top' inverted secondary pointing>
         <Menu.Item><b>Service Easier</b></Menu.Item>
         <Menu.Item onClick={()=> handleroute('/home')}><b>Home</b></Menu.Item>
         <Menu.Item onClick={()=> handleroute('/addservice')}><b>Lançar serviços</b></Menu.Item>
+        <Menu.Item onClick={()=> handleroute('/serviceList')}><b>Consultar serviços</b></Menu.Item>
+        <Menu.Item onClick={()=> handleroute('/useraccount')}><b>Conta</b></Menu.Item>
         <Menu.Item onClick={logout} position='right'><b>Sair</b></Menu.Item>
         </Menu>
         <div className={styles.container}>
