@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import {Form, Button, Message, Container} from 'semantic-ui-react'
 import Header from './../components/header'
+import InputMask from 'react-input-mask'
+import maskPriceBr from './../Utils/masks'
 export default function AddService(){
     const [isLoading, setLoading] = useState(false)
     const [servico, setServico] = useState("")
@@ -16,9 +18,11 @@ export default function AddService(){
     })
 
     function insertService(){
-
+        const priceFormated = valor
+        setValor(priceFormated)
+        console.log(valor)
         setLoading(true)
-        setFormSucess({
+     setFormSucess({
             error: true
         })
         setFormMessage({
@@ -27,6 +31,12 @@ export default function AddService(){
             header: 'Não foi possivel logar :(',
             content: "errorMessage"
           })
+    }
+    const [mask, setMask] = useState({})
+    function setValuePrice({ currentState }){ 
+        let { value } = currentState;
+        const inputMasked = maskPriceBr(value.toString())
+        setMask(inputMasked)
     }
     return (
         <div>
@@ -45,11 +55,11 @@ export default function AddService(){
                     </Form.Field>
                     <Form.Field>
                         <label>Valor cobrado</label>
-                        <input placeholder='Digite o valor cobrado' type={'text'} onChange={e=> setValor(e.target.value)} required></input>
+                        <InputMask placeholder='Digite o valor cobrado' {...mask} required onChange={e=> setValor(e.target.value)} beforeMaskedValueChange={setValuePrice} maskChar={null} />
                     </Form.Field>                 
                     <Form.Field>
                         <label>Data do serviço</label>
-                        <input placeholder='Digite quando o serviçofoi realizado' type={'date'} onChange={e=> setData(e.target.value)} required></input>
+                        <input placeholder='Digite quando o serviçofoi realizado' type={'date'}  onChange={e=> setData(e.target.value)} required></input>
                     </Form.Field> 
                     <Button color='pink'>Inserir</Button>
                 </Form>
