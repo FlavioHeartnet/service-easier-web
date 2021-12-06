@@ -11,7 +11,6 @@ const maskPriceBr = (value:string) => {
     }else if(value.length === 6){
         maskoptions.mask = 'R$ 9,999'
     }
-    console.log(maskoptions)
     return maskoptions
 }
 export default maskPriceBr

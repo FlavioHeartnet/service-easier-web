@@ -3,39 +3,99 @@ import {Form, Button, Message, Container} from 'semantic-ui-react'
 import Header from './../components/header'
 import InputMask from 'react-input-mask'
 import maskPriceBr from './../Utils/masks'
+import {useRouter} from 'next/router'
+import { collection, addDoc } from "firebase/firestore";
+import {db} from './../firebase'
+import moment from 'moment'
+
 export default function AddService(){
     const [isLoading, setLoading] = useState(false)
-    const [servico, setServico] = useState("")
-    const [nome, setNome] = useState("")
-    const [valor, setValor] = useState("")
-    const [dataServico, setData] = useState("")
+    const [service, setService] = useState("")
+    const [name, setName] = useState("")
+    const [price, setPrice] = useState('R$ 0,00')
+    const [serviceDate, setDate] = useState("")
     const [isFormSucess, setFormSucess] = useState({})
+    const [mask, setMask] = useState({})
     const [formMessage, setFormMessage] = useState({
         success: true,
         error:false,
         header:'',
         content:''
     })
+    const router = useRouter()
+    router.query
 
-    function insertService(){
-        const priceFormated = valor
-        setValor(priceFormated)
-        console.log(valor)
-        setLoading(true)
-     setFormSucess({
-            error: true
-        })
-        setFormMessage({
-            error: true,
-            success:false,
-            header: 'Não foi possivel logar :(',
-            content: "errorMessage"
-          })
+    function clearInputs(){
+        setService('')
+        setName('')
+        setMask({value: ''})
+        setDate('')
     }
-    const [mask, setMask] = useState({})
-    function setValuePrice({ currentState }){ 
-        let { value } = currentState;
-        const inputMasked = maskPriceBr(value.toString())
+    function validadeDate(date:string):boolean{
+        const getNow = moment()
+        const diff = getNow.diff(moment(date), 'days')
+            if(diff >= 0){
+                return true
+            }else{
+                return false
+            }
+    }
+    async function insertService(){
+        const priceFormated = price.replace('R$ ', '').replace(',','.')
+        setPrice(priceFormated)
+        setLoading(true)
+        try{
+        
+        if(validadeDate(serviceDate)){
+            const docRef = await addDoc(collection(db, "service"), {
+                uid: router.query.uid,
+                service: service,
+                name: name,
+                price: price,
+                serviceDate: moment(serviceDate).toDate()
+              });
+              clearInputs()
+              setLoading(false)
+              setFormSucess({
+                success: true
+            })
+            setFormMessage({
+                error: false,
+                success:true,
+                header: 'Serviço inserido com sucesso :)',
+                content: "Já esta cadastrado e contabilizado muito bem!!!"
+            })
+            
+        }else{
+            setLoading(false)
+            setFormSucess({
+                error: true
+            })
+            setFormMessage({
+                error: true,
+                success:false,
+                header: 'Não foi possivel inserir o serviço :(',
+                content: "A data do serviço esta no futuro, cadastre a data de hoje ou de dias anteriores"
+            })
+        }
+        }catch(error){
+            
+            setFormSucess({
+                error: true
+            })
+            setFormMessage({
+                error: true,
+                success:false,
+                header: 'Não foi possivel inserir o serviço :(',
+                content: "Serviço indisponivel no momento"
+            })
+        }
+        
+    }
+    
+    function setValuePrice(e){ 
+        let  value:string  = e.target.value.toString();
+        const inputMasked = maskPriceBr(value)
         setMask(inputMasked)
     }
     return (
@@ -47,19 +107,19 @@ export default function AddService(){
                     <Message {...formMessage}/>
                     <Form.Field>
                         <label>Nome do serviço</label>
-                        <input placeholder='Digite o nome do serviço realizado' type={'text'} onChange={e=> setServico(e.target.value)} required></input>
+                        <input placeholder='Digite o nome do serviço realizado' type={'text'} onChange={e=> setService(e.target.value)} value={service} required></input>
                     </Form.Field>
                     <Form.Field>
                         <label>Nome do cliente</label>
-                        <input placeholder='Digite o nome do cliente atendido' type={'text'} onChange={e=> setNome(e.target.value)} required></input>
+                        <input placeholder='Digite o nome do cliente atendido' type={'text'} onChange={e=> setName(e.target.value)} value={name} required></input>
                     </Form.Field>
                     <Form.Field>
                         <label>Valor cobrado</label>
-                        <InputMask placeholder='Digite o valor cobrado' {...mask} required onChange={e=> setValor(e.target.value)} beforeMaskedValueChange={setValuePrice} maskChar={null} />
+                        <InputMask placeholder='Digite o valor cobrado' {...mask} onBlur={(e)=> setPrice(e.target.value)} required onChange={e=> setValuePrice(e)} maskChar={null} />
                     </Form.Field>                 
                     <Form.Field>
                         <label>Data do serviço</label>
-                        <input placeholder='Digite quando o serviçofoi realizado' type={'date'}  onChange={e=> setData(e.target.value)} required></input>
+                        <input placeholder='Digite quando o serviço foi realizado' type={'date'}  onChange={e=> setDate(e.target.value)} value={serviceDate} required></input>
                     </Form.Field> 
                     <Button color='pink'>Inserir</Button>
                 </Form>

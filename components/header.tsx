@@ -1,12 +1,26 @@
-import { Menu, Dropdown} from 'semantic-ui-react'
+import { Menu} from 'semantic-ui-react'
 import styles from './../styles/Header.module.scss'
 import {useRouter} from 'next/router'
-import { signOut  } from "firebase/auth";
-import {auth} from './../firebase'
-export default function Header(props){
+import { signOut,onAuthStateChanged  } from "firebase/auth";
+import {auth } from './../firebase'
+export default function Header(){
     const router = useRouter()
+    let uid = ''
+    
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+           uid = user.uid;
+        } else {
+          router.push('/')
+        }
+      });
+    
+
     function handleroute(url){
-        router.push(url)
+        router.push({
+            pathname: url,
+            query: {uid : uid}
+        })
     }
 
     function logout(){
