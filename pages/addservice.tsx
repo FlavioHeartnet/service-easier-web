@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {Form, Button, Message, Container} from 'semantic-ui-react'
 import Header from './../components/header'
 import InputMask from 'react-input-mask'
@@ -22,9 +22,11 @@ export default function AddService(){
         header:'',
         content:''
     })
+    useEffect(() => {
+        setDate(moment().format('YYYY-MM-DD'))
+    })
+    
     const router = useRouter()
-    router.query
-
     function clearInputs(){
         setService('')
         setName('')
