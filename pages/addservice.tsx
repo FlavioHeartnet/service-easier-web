@@ -24,7 +24,7 @@ export default function AddService(){
     })
     useEffect(() => {
         setDate(moment().format('YYYY-MM-DD'))
-    })
+    },[serviceDate])
     
     const router = useRouter()
     function clearInputs(){
