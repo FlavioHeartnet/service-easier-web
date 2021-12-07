@@ -4,8 +4,7 @@ import Header from './../components/header'
 import InputMask from 'react-input-mask'
 import maskPriceBr from './../Utils/masks'
 import {useRouter} from 'next/router'
-import { collection, addDoc } from "firebase/firestore";
-import {db} from './../firebase'
+import Service from './../model/service'
 import moment from 'moment'
 
 export default function AddService(){
@@ -45,20 +44,15 @@ export default function AddService(){
     async function insertService(){
         const priceFormated = price.replace('R$ ', '').replace(',','.')
         setPrice(priceFormated)
+        console.log(parseFloat(priceFormated))
         setLoading(true)
         try{
-        
         if(validadeDate(serviceDate)){
-            const docRef = await addDoc(collection(db, "service"), {
-                uid: router.query.uid,
-                service: service,
-                name: name,
-                price: price,
-                serviceDate: moment(serviceDate).toDate()
-              });
-              clearInputs()
-              setLoading(false)
-              setFormSucess({
+            const serviceObject = new Service(router.query.uid.toString(), name, service, parseFloat(priceFormated),serviceDate)
+            await serviceObject.insertService()
+            clearInputs()
+            setLoading(false)
+            setFormSucess({
                 success: true
             })
             setFormMessage({
@@ -81,7 +75,7 @@ export default function AddService(){
             })
         }
         }catch(error){
-            
+            setLoading(false)
             setFormSucess({
                 error: true
             })
