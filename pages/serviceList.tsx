@@ -13,7 +13,7 @@ export default function ServiceList(){
   
     
     const currentCurrency = 'br'
-    let firebaseServiceList = []
+    const [firebaseServiceList, setFirebaseServiceList] = useState([])
     const [currentList, setList] = useState([])
     const [isFilter7, setFilter7] = useState(true)
     const [isFilter15, setFilter15] = useState(true)
@@ -85,8 +85,8 @@ export default function ServiceList(){
     }
 
     
-    async function getAllServicesByUid(){
-        console.log(uid)
+    /*async function getAllServicesByUid(){
+    
         const serviceList = []
         const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid));
         const querySnapshot = await getDocs(q);
@@ -100,31 +100,36 @@ export default function ServiceList(){
             })
         });
         
-        firebaseServiceList = serviceList
-        console.log(firebaseServiceList)
-    }
+        setFirebaseServiceList(serviceList) 
+        //console.log(firebaseServiceList)
+    }*/
     useEffect(() => {
-         getAllServicesByUid()
+        SnapshotRealTimeListener()
     })
     
     async function SnapshotRealTimeListener(){
         const services = [];
-        const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid));
-        const unsub =  await onSnapshot(q, (querySnapshot) => {
-            
-            querySnapshot.forEach((doc) => {
-                const docService = doc.data()
-                services.push({
-                    service: docService.service,
-                    client: docService.name,
-                    price: docService.price,
-                    date: moment.unix(docService.serviceDate).format('DD/MM/YYY')
+        try{
+            const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid));
+            const unsub =  await onSnapshot(q, (querySnapshot) => {
+                
+                querySnapshot.forEach((doc) => {
+                    const docService = doc.data()
+                    services.push({
+                        service: docService.service,
+                        client: docService.name,
+                        price: docService.price,
+                        date: moment.unix(docService.serviceDate).format('DD/MM/YYY')
+                    });
                 });
+                console.log(firebaseServiceList);
             });
-            console.log("Services ", services.join(", "));
-        });
-        setList(services)
-        return unsub
+            setFirebaseServiceList(services) 
+            return unsub
+        }catch(e){
+            console.log(e)
+        }
+        
     }
    //SnapshotRealTimeListener()
     return(
