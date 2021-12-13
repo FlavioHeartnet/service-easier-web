@@ -103,8 +103,12 @@ export default function ServiceList(){
         setFirebaseServiceList(serviceList) 
         //console.log(firebaseServiceList)
     }*/
+    
     useEffect(() => {
-        SnapshotRealTimeListener()
+        const unsub =  SnapshotRealTimeListener()
+        return () => {
+            unsub.then((a)=>{a()})
+        }
     })
     
     async function SnapshotRealTimeListener(){
@@ -119,7 +123,7 @@ export default function ServiceList(){
                         service: docService.service,
                         client: docService.name,
                         price: docService.price,
-                        date: moment.unix(docService.serviceDate).format('DD/MM/YYY')
+                        date: moment(docService.serviceDate).format('DD/MM/YYY')
                     });
                 });
                 console.log(firebaseServiceList);
@@ -130,7 +134,10 @@ export default function ServiceList(){
             console.log(e)
         }
         
+        
     }
+
+    
    //SnapshotRealTimeListener()
     return(
         <div>
