@@ -1,7 +1,8 @@
-import { collection, query, where, getDocs, addDoc,onSnapshot  } from "firebase/firestore";
+import { collection,addDoc } from "firebase/firestore";
 import {db} from './../firebase'
 
 interface IService{
+        id?: string
         uid?: string,
         name?: string,
         service?:string,
@@ -12,7 +13,7 @@ interface IService{
 export default class Service implements IService{
     
     static COLLECTION_NAME:string = 'service'
-    constructor(public uid?: string,
+    constructor(public id?: string , public uid?: string,
         public name?: string,
         public service?:string,
         public price?: number,

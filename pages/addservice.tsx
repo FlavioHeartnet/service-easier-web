@@ -48,7 +48,7 @@ export default function AddService(){
         setLoading(true)
         try{
         if(validadeDate(serviceDate)){
-            const serviceObject = new Service(router.query.uid.toString(), name, service, parseFloat(priceFormated),serviceDate)
+            const serviceObject = new Service("",router.query.uid.toString(), name, service, parseFloat(priceFormated),serviceDate)
             await serviceObject.insertService()
             clearInputs()
             setLoading(false)
