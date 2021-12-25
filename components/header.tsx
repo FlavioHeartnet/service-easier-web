@@ -3,13 +3,13 @@ import styles from './../styles/Header.module.scss'
 import {useRouter} from 'next/router'
 import { signOut,onAuthStateChanged  } from "firebase/auth";
 import {auth } from './../firebase'
+import { useAuth } from './contexts/authContext';
 export default function Header(){
     const router = useRouter()
-    let uid = ''
-    
+    const {uid,email, comission,payday, userSession} = useAuth()
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-           uid = user.uid;
+            userSession(user.uid,user.email,2,0)
         } else {
           router.push('/')
         }
@@ -18,8 +18,7 @@ export default function Header(){
 
     function handleroute(url){
         router.push({
-            pathname: url,
-            query: {uid : uid}
+            pathname: url
         })
     }
 

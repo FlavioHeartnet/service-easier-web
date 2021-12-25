@@ -8,10 +8,11 @@ import Service from './../model/service'
 import {useRouter} from 'next/router'
 import { collection, query, where, addDoc,onSnapshot, limit  } from "firebase/firestore";
 import moment from 'moment'
+import { useAuth } from '../components/contexts/authContext'
 
 export default function ServiceList(){
   
-    
+    const {uid} = useAuth()
     const currentCurrency = 'br'
     const [firebaseServiceList, setFirebaseServiceList] = useState([new Service()])
     const [currentList, setList] = useState([])
@@ -87,7 +88,6 @@ export default function ServiceList(){
     }
     
     useEffect(() => {
-        const uid = router.query.uid
         let services: Service[] = []
         setLoadingData(true)
         try{
