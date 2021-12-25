@@ -4,16 +4,21 @@ import {useRouter} from 'next/router'
 import { signOut,onAuthStateChanged  } from "firebase/auth";
 import {auth } from './../firebase'
 import { useAuth } from './contexts/authContext';
+import { useEffect } from 'react';
 export default function Header(){
     const router = useRouter()
     const {uid,email, comission,payday, userSession} = useAuth()
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            userSession(user.uid,user.email,2,0)
-        } else {
-          router.push('/')
-        }
-      });
+
+    useEffect(() => {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userSession(user.uid,user.email,2,0)
+            } else {
+              router.push('/')
+            }
+          });
+    }, [router, userSession])
+      
     
 
     function handleroute(url){

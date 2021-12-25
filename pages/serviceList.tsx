@@ -144,7 +144,7 @@ export default function ServiceList(){
         }catch(e){
             console.log(e)
         }
-    },[router.query.uid])
+    },[router.query.uid, uid])
     return(
         <div>
             <Header/>
