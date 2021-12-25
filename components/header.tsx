@@ -7,7 +7,7 @@ import { useAuth } from './contexts/authContext';
 import { useEffect } from 'react';
 export default function Header(){
     const router = useRouter()
-    const {uid,email, comission,payday, userSession} = useAuth()
+    const {userSession} = useAuth()
 
     useEffect(() => {
         onAuthStateChanged(auth, async (user) => {
