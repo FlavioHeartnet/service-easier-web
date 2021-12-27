@@ -1,4 +1,5 @@
 import { Card } from "semantic-ui-react";
+import  './../styles/Home.module.scss'
 export default function Cards(){
 
     const items = [
@@ -22,7 +23,7 @@ export default function Cards(){
           header: 'Lucro previsto do mês',
           description:
             'R$ 250,00',
-          meta: 'Valores a serem recebidos no dia 15/12/2021',
+          meta: 'Valores previstos a serem recebidos',
           color: 'pink',
           fluid: true
         },

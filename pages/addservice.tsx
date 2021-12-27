@@ -3,9 +3,10 @@ import {Form, Button, Message, Container} from 'semantic-ui-react'
 import Header from './../components/header'
 import InputMask from 'react-input-mask'
 import maskPriceBr from './../Utils/masks'
-import {useRouter} from 'next/router'
+
 import Service from './../model/service'
 import moment from 'moment'
+import { useAuth } from '../components/contexts/authContext'
 
 export default function AddService(){
     const [isLoading, setLoading] = useState(false)
@@ -25,7 +26,7 @@ export default function AddService(){
         setDate(moment().format('YYYY-MM-DD'))
     },[serviceDate])
     
-    const router = useRouter()
+    const {uid} = useAuth()
     function clearInputs(){
         setService('')
         setName('')
@@ -48,7 +49,7 @@ export default function AddService(){
         setLoading(true)
         try{
         if(validadeDate(serviceDate)){
-            const serviceObject = new Service("",router.query.uid.toString(), name, service, parseFloat(priceFormated),serviceDate)
+            const serviceObject = new Service("",uid, name, service, parseFloat(priceFormated),serviceDate)
             await serviceObject.insertService()
             clearInputs()
             setLoading(false)
@@ -75,6 +76,7 @@ export default function AddService(){
             })
         }
         }catch(error){
+            console.log(error)
             setLoading(false)
             setFormSucess({
                 error: true
