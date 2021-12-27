@@ -1,9 +1,16 @@
-import Header from './../components/header'
-import {Container, Form, Button, Segment} from 'semantic-ui-react'
+import HeaderMenu from './../components/header'
+import {Container, Form, Button, Segment, Dimmer, Icon, Header} from 'semantic-ui-react'
 export default function UserAccount(){
     return (
         <div>
-            <Header>
+            <HeaderMenu>
+            <Dimmer.Dimmable as={Segment} dimmed>
+            <Dimmer active>
+            <Header as='h2' icon inverted>
+              <Icon name='heart' />
+              Esta pagina ainda esta em construção :) <br/> em breve ela estará disponivel
+            </Header>
+          </Dimmer>
             <Container>
                 <h1>Sua Conta</h1>
                 <Button color='pink'>Editar</Button>
@@ -58,7 +65,8 @@ export default function UserAccount(){
                         </Form>
                     </Segment>
             </Container>
-            </Header>
+            </Dimmer.Dimmable>
+            </HeaderMenu>
             
             <br/>
         </div>
