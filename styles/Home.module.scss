@@ -1,0 +1,14 @@
+
+
+.ui.card{
+    .content {
+        .description{
+            font-size: 25px !important;
+        }
+    }
+    
+} 
+
+.ui.card>.content>.description, .ui.cards>.card>.content>.description{
+    font-size: 25px !important;
+}

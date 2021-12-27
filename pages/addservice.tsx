@@ -96,7 +96,8 @@ export default function AddService(){
     }
     return (
         <div>
-            <Header />
+            <Header >
+            <br/>
             <Container>
                 <h1>Lance aqui o serviço feito</h1>
                 <Form {...isFormSucess} loading={isLoading} onSubmit={insertService}> 
@@ -120,6 +121,8 @@ export default function AddService(){
                     <Button color='pink'>Inserir</Button>
                 </Form>
             </Container>
+            </Header>
+            
         </div>
     )
 }

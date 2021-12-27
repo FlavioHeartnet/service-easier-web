@@ -147,7 +147,7 @@ export default function ServiceList(){
     },[router.query.uid, uid])
     return(
         <div>
-            <Header/>
+            <Header>
             <Container>
                 <Segment basic>
                  <Dimmer active={isLoadingData} inverted>
@@ -192,6 +192,8 @@ export default function ServiceList(){
                 </Segment>
                 
             </Container>
+            </Header>
+            
             <br/>
         </div>
     )

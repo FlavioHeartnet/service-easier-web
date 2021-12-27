@@ -3,7 +3,7 @@ import {Container, Form, Button, Segment} from 'semantic-ui-react'
 export default function UserAccount(){
     return (
         <div>
-            <Header/>
+            <Header>
             <Container>
                 <h1>Sua Conta</h1>
                 <Button color='pink'>Editar</Button>
@@ -58,6 +58,8 @@ export default function UserAccount(){
                         </Form>
                     </Segment>
             </Container>
+            </Header>
+            
             <br/>
         </div>
     )
