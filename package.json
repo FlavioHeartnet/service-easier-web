@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@artsy/fresnel": "^3.2.1",
     "context-api": "0.0.2",
     "firebase": "^9.5.0",
     "moment": "^2.29.1",
