@@ -46,19 +46,21 @@ export default class User extends BaseAdapter implements IUser  {
     }
 
 
-async insertUser():Promise<{}>{
+async insertUser():Promise<{message}>{
         const newUser = {
             uid: this.uid,
             email: this.email,
             name: this.name,
             cpf: this.cpf,
             phone: this.phone,
+            comission: 50,
+            payday: 15,
             timestamp: serverTimestamp()
           }
        return this.insert(newUser,User.COLLECTION_NAME)
     }
 
-   async updateUser(id:string):Promise<{}> {
+   async updateUser(id:string):Promise<{message}> {
     return this.update(
         new User(this.uid,this.name,this.email,this.cpf,this.phone),
         id,
