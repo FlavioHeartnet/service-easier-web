@@ -1,5 +1,5 @@
-import { collection,addDoc } from "firebase/firestore";
-import {db} from './../firebase'
+import { serverTimestamp  } from "firebase/firestore";
+import BaseAdapter from "./baseAdapter";
 
 interface IService{
         id?: string
@@ -10,31 +10,59 @@ interface IService{
         serviceDate?: string
 }
 
-export default class Service implements IService{
+export default class Service extends BaseAdapter implements IService{
     
     static COLLECTION_NAME:string = 'service'
     constructor(public id?: string , public uid?: string,
         public name?: string,
         public service?:string,
         public price?: number,
-        public serviceDate?: string){}
+        public serviceDate?: string){
+        super();
+    }
 
-  
+    converter(){
+        return  {
+            toFirestore: (service) => {
+                return {
+                    uid: service.uid,
+                    service: service.service,
+                    name: service.name,
+                    price: service.price,
+                    serviceDate: service.serviceDate,
+                    };
+            },
+            fromFirestore: (snapshot, options) => {
+                const data = snapshot.data(options);
+                return new Service(data.uid,data.service,data.name,data.price,data.serviceDate);
+            }
+        };
+    }
 
-    async insertService():Promise<string>{
-        const docRef = await addDoc(collection(db, Service.COLLECTION_NAME), {
+    async insertService():Promise<{}>{
+        const newService = {
             uid: this.uid,
             service: this.service,
             name: this.name,
             price: this.price,
-            serviceDate: this.serviceDate
-          });
-          if(docRef.id !== ''){
-              return 'error'
-          }else{
-              return docRef.id
+            serviceDate: this.serviceDate,
+            timestamp: serverTimestamp()
           }
+        return this.insert(newService, Service.COLLECTION_NAME)
     }
+
+    updateService(id:string):Promise<{}>{
+        return this.update(
+            new Service(id,this.uid,this.service,this.name,this.price,this.serviceDate),
+            id,
+            Service.COLLECTION_NAME,
+            this.converter()) 
+    }
+
+    deleteService():Promise<{}>{
+        return this.delete(this.id, Service.COLLECTION_NAME)
+    }
+
 
     
 }

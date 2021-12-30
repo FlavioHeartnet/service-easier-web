@@ -22,9 +22,9 @@ export default function AddService(){
         header:'',
         content:''
     })
-    useEffect(() => {
-        setDate(moment().format('YYYY-MM-DD'))
-    },[serviceDate])
+    
+     
+
     
     const {uid} = useAuth()
     function clearInputs(){

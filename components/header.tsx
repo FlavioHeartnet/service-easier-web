@@ -140,9 +140,6 @@ export default function Header({ children }){
           }
     }, [router, userSession])
       
-    
-    
-
     function handleroute(url){
         router.push({
             pathname: url
