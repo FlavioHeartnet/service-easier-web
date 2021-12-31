@@ -1,15 +1,14 @@
-import {Table, Container, Button, Dimmer, Loader, Segment} from 'semantic-ui-react'
+import {Table, Container, Button, Dimmer, Loader, Segment, Icon} from 'semantic-ui-react'
 import Header from './../components/header'
 import Moment from 'moment'
 import { useEffect, useState } from 'react'
 import {db} from './../firebase'
-import dataTable from './../mocks/serviceMock'
 import Service from './../model/service'
-import {useRouter} from 'next/router'
 import { collection, query, where, addDoc,onSnapshot, limit  } from "firebase/firestore";
 import moment from 'moment'
 import { useAuth } from '../components/contexts/authContext'
-
+import CustomModalDelete from '../components/customModalDelete'
+import CustomModalUpdate from '../components/customModalUpdate'
 export default function ServiceList(){
   
     const {uid} = useAuth()
@@ -25,21 +24,7 @@ export default function ServiceList(){
     const [rentability, setRent] = useState(0)
     const [profit, setProfit] = useState(0)
     const [isLoadingData, setLoadingData] = useState(false)
-    const router = useRouter()
     const dateFormat = 'DD/MM/YYYY'
-    function mockdata(){
-        dataTable.map(async ({client,date,price,service}) => {
-            const docRef = await addDoc(collection(db, "service"), {
-                uid: 'MrZU4lQSyZZEZG7MfL3QKRyHsyj2',
-                service: service,
-                name: client,
-                price: price,
-                serviceDate: date
-              });
-              console.log(docRef.id)
-        })
-        
-    }
     async function filter(days:number){ 
         let rent = 0
         const serviceList = []
@@ -54,10 +39,11 @@ export default function ServiceList(){
             const diff = getnow.diff(serviceDate, 'days')
             if(diff <= days){
                 serviceList.push({
+                    id: docService.id,
                     service: docService.service,
                     client: docService.name,
                     price: docService.price,
-                    date: moment(docService.serviceDate).format(dateFormat)
+                    date: docService.serviceDate
                 })    
             }
         })
@@ -80,6 +66,16 @@ export default function ServiceList(){
         setFilterLoad15(false)
         setFilterLoad30(false)
         
+    }
+
+    function reloadListbyFilter(){
+        let numberofdays = 7
+        if(!isFilter15){
+            numberofdays = 15
+        }else if(!isFilter30){
+            numberofdays = 30
+        }
+        filter(numberofdays)
     }
     function priceFormat(price:number, currency:string):string{
         switch(currency){
@@ -134,17 +130,28 @@ export default function ServiceList(){
                         }
                         });
                         setFirebaseServiceList(services)
-                        
                 });
-
-
                 
                 }
             
         }catch(e){
             console.log(e)
         }
-    },[router.query.uid, uid])
+    },[uid])
+
+   async function deleteService(id:string){
+        const service = new Service(id)
+        const resp = await service.deleteService()
+        if(resp.message == 'success'){
+            reloadListbyFilter()
+        }
+    }
+    async function updateService(id, name,service,price,date){
+        const resp = await new Service(id,uid, name,service,price,date).updateService(id)
+        if(resp.message == 'success'){
+            reloadListbyFilter()
+        }
+    }
     return(
         <div>
             <Header>
@@ -157,22 +164,23 @@ export default function ServiceList(){
                 <Button loading={isFilterLoad7} onClick={() =>filter(7)}  basic={isFilter7} color='pink'>7 dias</Button>
                 <Button loading={isFilterLoad15} onClick={() =>filter(15)} basic={isFilter15}  color='pink'>15 dias</Button>
                 <Button loading={isFilterLoad30} onClick={() =>filter(30)} basic={isFilter30}  color='pink'>30 dias</Button>
-                {/* <Button onClick={() =>mockdata()} basic={isFilter30}  color='pink'>Generate Mock</Button> */}
                 <Table size='large' color='pink' unstackable selectable> 
                     <Table.Header>
                         <Table.HeaderCell>Serviço</Table.HeaderCell>
                         <Table.HeaderCell>Cliente</Table.HeaderCell>
                         <Table.HeaderCell>Valor</Table.HeaderCell>
                         <Table.HeaderCell>Data do Serviço</Table.HeaderCell>
+                        <Table.HeaderCell>Ações</Table.HeaderCell>
                     </Table.Header>
                     <Table.Body>
 
-                        {currentList.map(({ service, client, price, date },x) => (
+                        {currentList.map(({ id,service, client, price, date },x) => (
                         <Table.Row key={x}>
                             <Table.Cell>{service}</Table.Cell>
                             <Table.Cell>{client}</Table.Cell>
                             <Table.Cell>{priceFormat(price,currentCurrency)}</Table.Cell>
-                            <Table.Cell>{date}</Table.Cell>
+                            <Table.Cell>{moment(date).format(dateFormat)}</Table.Cell>
+                            <Table.Cell><CustomModalUpdate {...{ id,client, service, price, date }} updateService={updateService}/> <CustomModalDelete id={id} deleteService={deleteService}/></Table.Cell>
                         </Table.Row>
                         ))}
                     </Table.Body>
@@ -190,7 +198,7 @@ export default function ServiceList(){
                     </Table.Body>
                 </Table>
                 </Segment>
-                
+              
             </Container>
             </Header>
             
