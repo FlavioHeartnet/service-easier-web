@@ -40,7 +40,7 @@ export default function Signup(){
                     const user = userCredential.user;
                     console.log(user)
                     const token = user.uid
-                    const newUser = new User(token,nome,email,cpf,tel)
+                    const newUser = new User(token,nome,email,cpf,tel,0,0,null)
                     newUser.insertUser()
                         setLoading(false)
                         setFormSucess({success: true}) 

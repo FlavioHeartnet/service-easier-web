@@ -6,8 +6,18 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import User from './../model/user'
 import { db,auth } from '../firebase'
 import { updatePassword } from 'firebase/auth'
+import Messages from '../components/messages'
+import localizeErrorMap from '../Utils/firebaseMessagesBr'
+import validateCPF from '../Utils/validations'
 
 export default function UserAccount(){
+    const formInitialState = {
+        success: true,
+        error:false,
+        header:'',
+        content:'',
+        hidden: true
+    }
     const {uid} = useAuth()
     const [id, setId] = useState("")
     const [isDisabled, setDisabled] = useState(true)
@@ -17,69 +27,86 @@ export default function UserAccount(){
     const [phone, setPhone] = useState("")
     const [password, setPassword] = useState("")
     const [confPassword, setConfPassword] = useState("")
-    const [comission, setComission] = useState(0)
-    const [payday, setPayday] = useState(0)
-    const [formMessage, setFormMessage] = useState({
-        success: true,
-        error:false,
-        header:'',
-        content:''
-    })
-    const [isFormSucess, setFormSucess] = useState({})
+    const [comission, setComission] = useState("")
+    const [payday, setPayday] = useState("")
+    const [formMessage, setFormMessage] = useState(formInitialState)
+    const [editButtonState, setEditButton] = useState("Editar")
 
     function handleEdit(){
-        setDisabled(false)
+        if(editButtonState === 'Editar'){
+            setEditButton("Desabilitar")
+            setDisabled(false)
+            
+        }else{
+            setEditButton("Editar")
+            setDisabled(true)
+        }
+        setFormMessage(formInitialState)
     }
 
     async function updatePesonalData(){
-        const user = new User(uid,name,email,cpf,phone)
+        window.scrollTo(0, 0)
+        if(validateCPF(cpf)){
+        const user = new User(uid,name,email,cpf,phone,comission,payday, null)
         const resp = await user.updateUser(id)
         if(resp.message == 'success'){
-            setFormSucess({success: true})
+            setDisabled(true)
             setFormMessage({
                 success: true,
                 error:false,
                 header:'Dados atualizados com sucesso! :)',
-                content:'Fique tranquilo(a) caso não tenha aparecido os valores é so atualizar a pagina!'
+                content:'Fique tranquilo(a) caso não tenha aparecido os valores é so atualizar a pagina!',
+                hidden: false
             })
         }else{
-            setFormSucess({error: true})
+            console.log(resp.message)
             setFormMessage({
                 success: false,
                 error:true,
                 header:'Não foi possivel atualizar seus dados! :(',
-                content:'Estamos trabalhando para melhorar nossos serviços, tente novamente mais tarde!'
+                content:'Estamos trabalhando para melhorar nossos serviços, tente novamente mais tarde!',
+                hidden: false
+            })
+        }
+        }else{
+            setFormMessage({
+                success: false,
+                error:true,
+                header:'Não foi possivel atualizar seus dados! :(',
+                content:'CPF informado é inválido!',
+                hidden: false
             })
         }
     }
     function updateUserPassword(){
-
+        
         if(password == confPassword){
         updatePassword(auth.currentUser, password).then(() => {
-            setFormSucess({success: true})
+            setDisabled(true)
             setFormMessage({
                 success: true,
                 error:false,
                 header:'Senha atualizada com sucesso! :)',
-                content:'Sua senha esta atualiza e segura, parabéns!!'
+                content:'Sua senha esta atualiza e segura, parabéns!!',
+                hidden: false
             })
           }).catch((error) => {
-            console.log(error)
-            setFormSucess({error: true})
+              console.log(localizeErrorMap(error))
             setFormMessage({
                 success: false,
                 error:true,
                 header:'Não foi possivel atualizar sua senha! :(',
-                content:'Estamos trabalhando para melhorar nossos serviços, tente novamente mais tarde!'
+                content:localizeErrorMap(error),//'Estamos trabalhando para melhorar nossos serviços, tente novamente mais tarde!',
+                hidden: false
             })
           });
         }else{
-            setFormSucess({error: true})
             setFormMessage({
                 success: false,
                 error:true,
                 header:'As senhas digitadas não batem :(',
-                content:'Por favor revise a senha informada, as mesma devem ser iguais!'
+                content:'Por favor revise a senha informada, as mesma devem ser iguais!',
+                hidden: false
             })
         }
     }
@@ -103,10 +130,9 @@ export default function UserAccount(){
         <div>
             <HeaderMenu>
             <Container>
-                <Form {...isFormSucess}>
-                <Message {...formMessage}/>
                 <h1>Sua Conta</h1>
-                <Button onClick={handleEdit} color='pink'>Editar</Button>
+                <Button onClick={handleEdit} color='pink'>{editButtonState}</Button>
+                <Messages {...formMessage}/>
                 <Segment raised>
                 <Form onSubmit={updatePesonalData}>
                     
@@ -127,7 +153,7 @@ export default function UserAccount(){
                         <input value={phone} onChange={(e) => setPhone(e.target.value)} disabled={isDisabled} type='text'/>
                     </Form.Field>
                     
-                    <Button color='pink'>Salvar</Button>
+                    <Button disabled={isDisabled} color='pink'>Salvar</Button>
                 </Form>
                 </Segment>
                 <Segment raised>
@@ -135,13 +161,13 @@ export default function UserAccount(){
                         <Form onSubmit={updateUserPassword}>
                         <Form.Field>
                             <label>Nova Senha</label>
-                            <input value='' onChange={(e) => setPassword(e.target.value)} disabled={isDisabled} type='password'/>
+                            <input  onChange={(e) => setPassword(e.target.value)} disabled={isDisabled} type='password'/>
                         </Form.Field>
                         <Form.Field>
                             <label>Confirmar Senha</label>
-                            <input value='' onChange={(e) => setConfPassword(e.target.value)} disabled={isDisabled} type='password'/>
+                            <input  onChange={(e) => setConfPassword(e.target.value)} disabled={isDisabled} type='password'/>
                         </Form.Field>
-                        <Button color='pink'>Alterar</Button>
+                        <Button disabled={isDisabled} color='pink'>Alterar</Button>
                         </Form>
                     </Segment>
                     <Segment raised>
@@ -149,16 +175,15 @@ export default function UserAccount(){
                         <Form>
                         <Form.Field>
                             <label>% da comissão</label>
-                            <input value={comission} onChange={(e) => setComission(parseInt(e.target.value))} disabled={isDisabled} type='number'/>
+                            <input value={comission} onChange={(e) => setComission(e.target.value)} disabled={isDisabled} type='number'/>
                         </Form.Field>
                         <Form.Field>
                             <label>Periodo de recebimento</label>
-                            <input value={payday} onChange={(e) => setPayday(parseInt(e.target.value))} disabled={isDisabled} type='text'/>
+                            <input value={payday} onChange={(e) => setPayday(e.target.value)} disabled={isDisabled} type='text'/>
                         </Form.Field>
-                        <Button color='pink'>Alterar</Button>
+                        <Button disabled={isDisabled} onClick={updatePesonalData} color='pink'>Salvar</Button>
                         </Form>
                     </Segment>
-                    </Form>
             </Container>
             </HeaderMenu>
             <br/>
