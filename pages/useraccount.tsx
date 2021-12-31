@@ -50,7 +50,7 @@ export default function UserAccount(){
         const user = new User(uid,name,email,cpf,phone,comission,payday, null)
         const resp = await user.updateUser(id)
         if(resp.message == 'success'){
-            setDisabled(true)
+            handleEdit()
             setFormMessage({
                 success: true,
                 error:false,
@@ -82,7 +82,7 @@ export default function UserAccount(){
         
         if(password == confPassword){
         updatePassword(auth.currentUser, password).then(() => {
-            setDisabled(true)
+            handleEdit()
             setFormMessage({
                 success: true,
                 error:false,
