@@ -47,6 +47,9 @@ export default function ServiceList(){
                 })    
             }
         })
+        serviceList.sort((a,b) => {
+            return +moment(b.date).toDate() - +moment(a.date).toDate()
+        })
             
             rent = Math.round(serviceList.reduce((acc,c) => acc + parseFloat(c.price), 0))
             setList(serviceList)
