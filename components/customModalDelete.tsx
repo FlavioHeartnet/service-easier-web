@@ -63,7 +63,7 @@ function CustomModalDelete(props) {
                 props.deleteService(props.id)
                 }
               }
-              color='pink'
+              positive
             >
               Sim
             </Button>

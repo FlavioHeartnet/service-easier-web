@@ -34,10 +34,10 @@ function CustomModalUpdate(props) {
     useEffect(() => {
         setName(props.client)
         setPrice(props.price)
-        setMask({value: 'R$ '+ price}) //value that will really apear on price field
+        setMask({value: 'R$ '+ props.price}) //value that will really apear on price field
         setService(props.service)
         setDate(moment(props.date).format('YYYY-MM-DD'))
-    }, [props.client, props.price, props.service, props.date, price])
+    }, [props.client, props.price, props.service, props.date])
     
     function setValuePrice(e){ 
         let  value:string  = e.target.value.toString();
@@ -82,7 +82,7 @@ function CustomModalUpdate(props) {
                     </Form.Field>
                     <Form.Field>
                         <label>Valor cobrado</label>
-                        <InputMask placeholder='Digite o valor cobrado' {...mask} onBlur={(e)=> setPrice(e.target.value)}  required onChange={e=> setValuePrice(e)} maskChar={null} />
+                        <InputMask placeholder='Digite o valor cobrado' {...mask}  required onBlur={(e)=> setPrice(e.target.value)}  onChange={e=> setValuePrice(e)} maskChar={null} />
                     </Form.Field>                 
                     <Form.Field>
                         <label>Data do serviço:</label>
