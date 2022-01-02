@@ -8,7 +8,7 @@ type envConfig = {
     measurementId:string
 }
 
-export const config: envConfig = {
+const config: envConfig = {
     apiKey: process.env.NEXT_PUBLIC_API_KEY,
     authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
     projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
@@ -17,3 +17,5 @@ export const config: envConfig = {
     appId: process.env.NEXT_PUBLIC_APP_ID,
     measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID
 }
+
+export default config

@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
-import {config} from './pages/config'
+import config from './pages/config'
 
 const firebaseConfig = {
   apiKey: config.apiKey,
