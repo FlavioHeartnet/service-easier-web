@@ -90,14 +90,12 @@ export default function ServiceList(){
         let services: Service[] = []
         setLoadingData(true)
         try{
-            console.log(uid)
             if(uid!= undefined && uid!= null){
                 const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid),limit(250));
                 const unsub = onSnapshot(q, (querySnapshot) => {
                     querySnapshot.docChanges().forEach((change) => {
                         setLoadingData(false) 
                         if (change.type === "added") {
-                           console.log("Service Added: ", change.doc.data());
                             const docService = change.doc.data()
                             services.push(new Service(
                                 change.doc.id, uid.toString(),
@@ -110,7 +108,6 @@ export default function ServiceList(){
                             
                         }
                         if (change.type === "modified") {
-                            console.log("service Modified: ", change.doc.data());
                             
                             const docService = change.doc.data()
                             const modifyService = new Service(
@@ -122,14 +119,12 @@ export default function ServiceList(){
                              );
                              let serviceItemToModify = services.filter((a)=> a.id === modifyService.id)
                              services[services.indexOf(serviceItemToModify[0])] = modifyService
-                             console.log(services)
+                        
                              
                         }
                         if (change.type === "removed") {
-                            console.log("Service Removed: ", change.doc.data());
                             let serviceItemToRemove = services.filter((a)=> a.id === change.doc.id)
                             services.splice(services.indexOf(serviceItemToRemove[0]),1)
-                            console.log(services)
                         }
                         });
                         setFirebaseServiceList(services)
