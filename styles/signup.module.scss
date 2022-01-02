@@ -1,0 +1,17 @@
+.container{
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    height: 100vh;
+}
+
+form {
+    .buttons{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }

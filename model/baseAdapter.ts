@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import {db} from './../firebase'
 export default class BaseAdapter {
 
@@ -14,7 +14,7 @@ export default class BaseAdapter {
     async update(object:any, id:string,collectionName:string, converter: any){
         try{
             const userRef = doc(db, collectionName, id).withConverter(converter);
-            await updateDoc(userRef, object);
+            await setDoc(userRef, object);
             return {message: "success"}
         }catch(e){
             return {message:e}

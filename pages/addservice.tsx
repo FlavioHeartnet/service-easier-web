@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {Form, Button, Message, Container} from 'semantic-ui-react'
 import Header from './../components/header'
 import InputMask from 'react-input-mask'
 import maskPriceBr from './../Utils/masks'
-
 import Service from './../model/service'
 import moment from 'moment'
 import { useAuth } from '../components/contexts/authContext'
@@ -105,16 +104,16 @@ export default function AddService(){
                 <Form {...isFormSucess} loading={isLoading} onSubmit={insertService}> 
                     <Message {...formMessage}/>
                     <Form.Field>
-                        <label>Nome do serviço</label>
-                        <input placeholder='Digite o nome do serviço realizado' type={'text'} onChange={e=> setService(e.target.value)} value={service} required></input>
-                    </Form.Field>
-                    <Form.Field>
                         <label>Nome do cliente</label>
                         <input placeholder='Digite o nome do cliente atendido' type={'text'} onChange={e=> setName(e.target.value)} value={name} required></input>
                     </Form.Field>
                     <Form.Field>
+                        <label>Nome do serviço</label>
+                        <input placeholder='Digite o nome do serviço realizado' type={'text'} onChange={e=> setService(e.target.value)} value={service} required></input>
+                    </Form.Field>
+                    <Form.Field>
                         <label>Valor cobrado</label>
-                        <InputMask placeholder='Digite o valor cobrado' {...mask} onBlur={(e)=> setPrice(e.target.value)} required onChange={e=> setValuePrice(e)} maskChar={null} />
+                        <InputMask placeholder='Digite o valor cobrado' {...mask} onBlur={(e)=> setPrice(e.target.value)} onChange={e=> setValuePrice(e)} maskChar={null} />
                     </Form.Field>                 
                     <Form.Field>
                         <label>Data do serviço</label>

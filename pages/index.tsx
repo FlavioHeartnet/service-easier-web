@@ -3,10 +3,10 @@ import styles from '../styles/Login.module.scss'
 import {Form, Button, Message, Segment, Container,Modal} from 'semantic-ui-react'
 import { useState } from 'react'
 import {auth, GoogleProvider} from './../firebase'
-import { signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from "firebase/auth";
 import {useRouter} from 'next/router'
 import localizeErrorMap from './../Utils/firebaseMessagesBr'
-
+import Messages from '../components/messages'
 export default function Login() {
   const router = useRouter()
   auth.useDeviceLanguage()
@@ -19,8 +19,10 @@ export default function Login() {
       success: true,
       error:false,
       header:'',
-      content:''
+      content:'',
+      hidden: true
   })
+  const [messageWidget, setMessageWidget] = useState(<></>)
   function loginGoogle(){
     signInWithPopup(auth, GoogleProvider)
     .then((result) => {
@@ -37,7 +39,8 @@ export default function Login() {
         error: true,
         success:false,
         header: 'Não foi possivel logar :(',
-        content: errorMessage
+        content: errorMessage,
+        hidden:false
       })
       setLoading(false)
     });
@@ -58,10 +61,46 @@ export default function Login() {
       error: true,
       success:false,
       header: 'Não foi possivel logar :(',
-      content: errorMessage
+      content: errorMessage,
+      hidden:false
     })
     setLoading(false)
   });
+  }
+
+  function forgotPassword(){
+    setMessageWidget(<></>)
+    if(email === ''){
+      setFormMessage({
+          error: true,
+          success:false,
+          header: 'E-mail não pode estar em branco :(',
+          content: 'Digite seu email no campo e-mail!!',
+          hidden:false
+        })
+    }else{
+      sendPasswordResetEmail(auth, email)
+      .then(() => {
+        setFormMessage({
+            error: false,
+            success:true,
+            header: 'E-mail enviado ;)',
+            content: 'Foi enviado um email a sua caixa de entrada com as instruções para sua senha',
+            hidden:false
+          })
+          
+      })
+      .catch((error) => {
+      setFormMessage({
+          error: true,
+          success:false,
+          header: 'Não foi possivel resetar a senha :(',
+          content: 'Estamos trabalhando para corrigir isso, tente novamente mais tarde!',
+          hidden:false
+        })
+        
+      });
+    }
   }
 
   return (
@@ -77,12 +116,13 @@ export default function Login() {
       <main className={styles.main}>
         
         <h1 className={styles.title}>
-          Service Easier <br/><a href="">Gestão de Serviços!</a>
+          Service Easier <br/><a style={{color: '#e03997'}} href="">Gestão de Serviços!</a>
         </h1>
 
         <p className={styles.description}>
           Faça seu login aqui!
-        </p>  
+        </p> 
+        <Messages {...formMessage}/>
       <Form onSubmit={login} {...isFormSucess}>
       <Message
                     {...formMessage}          
@@ -97,14 +137,10 @@ export default function Login() {
       </Form.Field>
       <br/>
       <div className={styles.buttons}>
-        <Button loading={isLoading} primary>Entrar</Button>
+        <Button loading={isLoading} color='pink'>Entrar</Button>
         <Button type={'button'} color='red' onClick={loginGoogle}>Entrar com Google</Button>
-        <Modal
-          trigger={<Button type={'button'}>Não tem acesso?</Button>}
-          header='Em breve será sua vez :)'
-          content='Este projeto ainda esta em fase beta por isso apenas algumas pessoas podem usar-lo no momento, mas não se preocupe no futuro proximo ele estará disponivel para você'
-          actions={[{ key: 'done', content: 'Entendi', positive: true }]}
-        />
+        <Button onClick={()=> router.push('/signup')} type={'button'}>Não tem acesso?</Button>
+        <Button basic onClick={forgotPassword} type={'button'}>Esqueceu a senha?</Button>
       </div>
       </Form>
       

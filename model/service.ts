@@ -51,15 +51,15 @@ export default class Service extends BaseAdapter implements IService{
         return this.insert(newService, Service.COLLECTION_NAME)
     }
 
-    updateService(id:string):Promise<{}>{
+    updateService(id:string):Promise<{message}>{
         return this.update(
-            new Service(id,this.uid,this.service,this.name,this.price,this.serviceDate),
+            new Service(id,this.uid,this.name,this.service,this.price,this.serviceDate),
             id,
             Service.COLLECTION_NAME,
             this.converter()) 
     }
 
-    deleteService():Promise<{}>{
+    deleteService():Promise<{message}>{
         return this.delete(this.id, Service.COLLECTION_NAME)
     }
 
