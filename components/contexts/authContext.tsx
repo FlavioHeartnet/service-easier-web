@@ -1,11 +1,12 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-
+import admin from 'firebase-admin'
 export type authContextType = {
     uid: string
     email: string
     comission: number
     payday: number
     userSession?: (uid, email, comission, payday)=>void
+    firebaseAdmin: admin.app.App
 };
 
 const authContextDefaultValues: authContextType = {
@@ -13,7 +14,8 @@ const authContextDefaultValues: authContextType = {
     email: '',
     comission: 0,
     payday: 15,
-    userSession: ()=>{}
+    userSession: ()=>{},
+    firebaseAdmin: null
 };
 
 const AuthContext = createContext<authContextType>(authContextDefaultValues);
@@ -31,6 +33,7 @@ export function AuthProvider({ children }: Props) {
     const [email, setEmail] = useState('')
     const [comission, setComission] = useState(0)
     const [payday, setPayday] = useState(0)
+    const [firebaseAdmin, setFirebase] = useState(authContextDefaultValues.firebaseAdmin)
 
 
     const userSession = (uid,email,comission,payday) => {
@@ -44,7 +47,9 @@ export function AuthProvider({ children }: Props) {
         email,
         comission,
         payday,
-        userSession
+        userSession,
+        setFirebase,
+        firebaseAdmin
     }
     return (
         <>

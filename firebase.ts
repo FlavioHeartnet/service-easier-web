@@ -5,6 +5,7 @@ import { getAuth } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import config from './config'
 
+
 const firebaseConfig = {
   apiKey: config.apiKey,
   authDomain: config.authDomain,
@@ -15,7 +16,9 @@ const firebaseConfig = {
   measurementId: config.measurementId
 };
 
+
 // Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
 export const GoogleProvider = new GoogleAuthProvider();
 export const auth = getAuth(app)
