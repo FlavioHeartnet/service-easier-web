@@ -1,13 +1,28 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import admin from 'firebase-admin'
+import { Firestore, getFirestore } from 'firebase/firestore';
+import { FirebaseApp, initializeApp } from "firebase/app";
+import { Auth, getAuth } from "firebase/auth";
+import config from "../../config";
 export type authContextType = {
     uid: string
     email: string
     comission: number
     payday: number
     userSession?: (uid, email, comission, payday)=>void
-    firebaseAdmin: admin.app.App
+    app: FirebaseApp,
+    auth: Auth,
+    db: Firestore
 };
+
+const firebaseConfig = {
+    apiKey: config.apiKey,
+    authDomain: config.authDomain,
+    projectId: config.projectId,
+    storageBucket: config.storageBucket,
+    messagingSenderId: config.messagingSenderId,
+    appId: config.appId,
+    measurementId: config.measurementId
+  };
 
 const authContextDefaultValues: authContextType = {
     uid: '',
@@ -15,7 +30,9 @@ const authContextDefaultValues: authContextType = {
     comission: 0,
     payday: 15,
     userSession: ()=>{},
-    firebaseAdmin: null
+    app: initializeApp(firebaseConfig),
+    auth: null,
+    db: null
 };
 
 const AuthContext = createContext<authContextType>(authContextDefaultValues);
@@ -33,7 +50,9 @@ export function AuthProvider({ children }: Props) {
     const [email, setEmail] = useState('')
     const [comission, setComission] = useState(0)
     const [payday, setPayday] = useState(0)
-    const [firebaseAdmin, setFirebase] = useState(authContextDefaultValues.firebaseAdmin)
+    const app = authContextDefaultValues.app
+    const auth = getAuth(authContextDefaultValues.app)
+    const db = getFirestore(authContextDefaultValues.app)
 
 
     const userSession = (uid,email,comission,payday) => {
@@ -47,9 +66,10 @@ export function AuthProvider({ children }: Props) {
         email,
         comission,
         payday,
+        app,
+        auth,
+        db,
         userSession,
-        setFirebase,
-        firebaseAdmin
     }
     return (
         <>

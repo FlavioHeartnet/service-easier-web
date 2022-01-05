@@ -1,10 +1,9 @@
 import HeaderMenu from './../components/header'
-import {Container, Form, Button, Segment, Dimmer, Message} from 'semantic-ui-react'
+import {Container, Form, Button, Segment} from 'semantic-ui-react'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../components/contexts/authContext'
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import User from './../model/user'
-import { db,auth } from '../firebase'
 import { updatePassword } from 'firebase/auth'
 import Messages from '../components/messages'
 import localizeErrorMap from '../Utils/firebaseMessagesBr'
@@ -18,7 +17,7 @@ export default function UserAccount(){
         content:'',
         hidden: true
     }
-    const {uid} = useAuth()
+    const {uid, auth, db} = useAuth()
     const [id, setId] = useState("")
     const [isDisabled, setDisabled] = useState(true)
     const [name, setName] = useState("")
@@ -48,7 +47,12 @@ export default function UserAccount(){
         window.scrollTo(0, 0)
         if(validateCPF(cpf)){
         const user = new User(uid,name,email,cpf,phone,comission,payday, null)
-        const resp = await user.updateUser(id)
+        let resp = {message:''}
+        if(id==""){
+            resp = await user.insertUser()
+        }else{
+            resp = await user.updateUser(id)
+        }
         if(resp.message == 'success'){
             handleEdit()
             setFormMessage({
@@ -125,7 +129,7 @@ export default function UserAccount(){
             })
         });
         return unsub
-    }, [uid])
+    }, [db, uid])
     return (
         <div>
             <HeaderMenu>
