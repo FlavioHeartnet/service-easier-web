@@ -17,11 +17,11 @@ export default function UserAccount(){
         content:'',
         hidden: true
     }
-    const {uid, auth, db} = useAuth()
+    const {uid, auth, db, name,email, userSession} = useAuth()
     const [id, setId] = useState("")
     const [isDisabled, setDisabled] = useState(true)
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
+    const [nameState, setName] = useState(name)
+    const [emailState, setEmail] = useState(email)
     const [cpf, setCpf] = useState("")
     const [phone, setPhone] = useState("")
     const [password, setPassword] = useState("")
@@ -46,8 +46,11 @@ export default function UserAccount(){
     async function updatePesonalData(){
         window.scrollTo(0, 0)
         if(validateCPF(cpf)){
-        const user = new User(uid,name,email,cpf,phone,comission,payday, null)
+        const user = new User(uid,cpf,phone,comission,payday, null)
         let resp = {message:''}
+        user.updateEmailInFirebase(auth,emailState)
+        user.updateEmailInFirebase(auth, nameState)
+        userSession(uid,nameState,emailState,comission,payday)
         if(id==""){
             resp = await user.insertUser()
         }else{

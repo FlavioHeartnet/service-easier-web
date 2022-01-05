@@ -128,8 +128,7 @@ export default function Header({ children }){
         if(mounted){
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-              console.log(user)
-                userSession(user.uid,user.email,2,0)
+                userSession(user.uid,user.displayName,user.email,2,0)
             } else {  
               router.push('/')
             }

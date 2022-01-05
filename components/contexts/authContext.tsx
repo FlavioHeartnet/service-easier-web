@@ -8,10 +8,11 @@ export type authContextType = {
     email: string
     comission: number
     payday: number
-    userSession?: (uid, email, comission, payday)=>void
+    userSession?: (uid,name, email, comission, payday)=>void
     app: FirebaseApp,
     auth: Auth,
     db: Firestore
+    name:string
 };
 
 const firebaseConfig = {
@@ -32,7 +33,8 @@ const authContextDefaultValues: authContextType = {
     userSession: ()=>{},
     app: initializeApp(firebaseConfig),
     auth: null,
-    db: null
+    db: null,
+    name:''
 };
 
 const AuthContext = createContext<authContextType>(authContextDefaultValues);
@@ -50,13 +52,15 @@ export function AuthProvider({ children }: Props) {
     const [email, setEmail] = useState('')
     const [comission, setComission] = useState(0)
     const [payday, setPayday] = useState(0)
+    const [name, setName] = useState("")
     const app = authContextDefaultValues.app
     const auth = getAuth(authContextDefaultValues.app)
     const db = getFirestore(authContextDefaultValues.app)
 
 
-    const userSession = (uid,email,comission,payday) => {
+    const userSession = (uid,email,name,comission,payday) => {
         setUid(uid)
+        setName(name)
         setEmail(email)
         setComission(comission)
         setPayday(payday)
@@ -64,6 +68,7 @@ export function AuthProvider({ children }: Props) {
     const value = {
         uid,
         email,
+        name,
         comission,
         payday,
         app,
