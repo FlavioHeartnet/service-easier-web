@@ -1,3 +1,4 @@
+import { updateEmail, updateProfile } from "firebase/auth";
 import { serverTimestamp  } from "firebase/firestore";
 import BaseAdapter from "./baseAdapter";
 
@@ -23,11 +24,9 @@ export default class User extends BaseAdapter implements IUser  {
     payday: number;
     timestamp:Date
     static COLLECTION_NAME:string = 'user'
-    constructor(uid,name,email,cpf,phone, comission, payday, timestamp){
+    constructor(uid,cpf,phone, comission, payday, timestamp){
         super();
         this.uid = uid
-        this.name = name
-        this.email = email
         this.cpf = cpf
         this.phone = phone
         this.comission = comission
@@ -40,8 +39,6 @@ export default class User extends BaseAdapter implements IUser  {
             toFirestore: (user) => {
                 return {
                     uid: user.uid,
-                    name: user.name,
-                    email: user.email,
                     cpf: user.cpf,
                     phone: user.phone,
                     comission: user.comission,
@@ -51,7 +48,7 @@ export default class User extends BaseAdapter implements IUser  {
             },
             fromFirestore: (snapshot, options) => {
                 const data = snapshot.data(options);
-                return new User(data.uid,data.name,data.email,data.cpf,data.phone, data.comission,data.payday,data.timestamp);
+                return new User(data.uid,data.cpf,data.phone, data.comission,data.payday,data.timestamp);
             }
         };
     }
@@ -60,8 +57,6 @@ export default class User extends BaseAdapter implements IUser  {
 async insertUser():Promise<{message}>{
         const newUser = {
             uid: this.uid,
-            email: this.email,
-            name: this.name,
             cpf: this.cpf,
             phone: this.phone,
             comission: 50,
@@ -73,10 +68,28 @@ async insertUser():Promise<{message}>{
 
    async updateUser(id:string):Promise<{message}> {
     return this.update(
-        new User(this.uid,this.name,this.email,this.cpf,this.phone, this.comission, this.payday, serverTimestamp()),
+        new User(this.uid,this.cpf,this.phone, this.comission, this.payday, serverTimestamp()),
         id,
         User.COLLECTION_NAME,
         this.converter()) 
+   }
+
+   async updateEmailInFirebase(auth, email){
+    await updateEmail(auth.currentUser, email).then(() => {
+        return ({message: 'sucess'})
+      }).catch((error) => {
+        return(error)
+      });
+   }
+
+   async updateDisplayNameInFireBase(auth, name){
+    await updateProfile(auth.currentUser, {
+        displayName: name
+      }).then(() => {
+        return 'sucess'
+      }).catch((error) => {
+        return error
+      });
    }
 
 

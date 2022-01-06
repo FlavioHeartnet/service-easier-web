@@ -3,12 +3,13 @@ import {db} from './../firebase'
 export default class BaseAdapter {
 
     async insert(object:any, collectionName:string){
-        const docRef = await addDoc(collection(db, collectionName), object);
-          if(docRef.id !== ''){
-              return {message: 'error'}
-          }else{
-              return {message: docRef.id}
-          }
+        try{
+            const docRef = await addDoc(collection(db, collectionName), object);
+            return {message: docRef.id}
+        }catch(e){
+            return {message: e}
+        }
+        
     }
 
     async update(object:any, id:string,collectionName:string, converter: any){

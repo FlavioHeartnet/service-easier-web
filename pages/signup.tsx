@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 import {Form, Button, Message} from 'semantic-ui-react'
 import styles from './../styles/signup.module.scss'
 import { createUserWithEmailAndPassword , sendEmailVerification} from "firebase/auth";
-import {auth} from './../firebase'
 import User from '../model/user';
 import localizeErrorMap from './../Utils/firebaseMessagesBr'
+import { useAuth } from '../components/contexts/authContext';
 
 export default function Signup(){
     const router = useRouter()
@@ -17,7 +17,7 @@ export default function Signup(){
         header:'',
         content:''
     })
-
+    const {auth} = useAuth()
     const [nome, setNome] = useState("")
     const [email, setEmail] = useState("")
     const [cpf, setCpf] = useState("")
@@ -39,8 +39,11 @@ export default function Signup(){
                 .then(async (userCredential) => {
                     const user = userCredential.user;
                     console.log(user)
+
                     const token = user.uid
-                    const newUser = new User(token,nome,email,cpf,tel,0,0,null)
+                    const newUser = new User(token,cpf,tel,0,0,null)
+                    newUser.updateEmailInFirebase(auth,email)
+                    newUser.updateEmailInFirebase(auth, nome)
                     newUser.insertUser()
                         setLoading(false)
                         setFormSucess({success: true}) 

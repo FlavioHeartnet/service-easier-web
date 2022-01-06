@@ -1,10 +1,9 @@
 import HeaderMenu from './../components/header'
-import {Container, Form, Button, Segment, Dimmer, Message} from 'semantic-ui-react'
+import {Container, Form, Button, Segment} from 'semantic-ui-react'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../components/contexts/authContext'
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import User from './../model/user'
-import { db,auth } from '../firebase'
 import { updatePassword } from 'firebase/auth'
 import Messages from '../components/messages'
 import localizeErrorMap from '../Utils/firebaseMessagesBr'
@@ -18,11 +17,11 @@ export default function UserAccount(){
         content:'',
         hidden: true
     }
-    const {uid} = useAuth()
+    const {uid, auth, db, name,email, userSession} = useAuth()
     const [id, setId] = useState("")
     const [isDisabled, setDisabled] = useState(true)
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
+    const [nameState, setName] = useState(name)
+    const [emailState, setEmail] = useState(email)
     const [cpf, setCpf] = useState("")
     const [phone, setPhone] = useState("")
     const [password, setPassword] = useState("")
@@ -47,8 +46,16 @@ export default function UserAccount(){
     async function updatePesonalData(){
         window.scrollTo(0, 0)
         if(validateCPF(cpf)){
-        const user = new User(uid,name,email,cpf,phone,comission,payday, null)
-        const resp = await user.updateUser(id)
+        const user = new User(uid,cpf,phone,comission,payday, null)
+        let resp = {message:''}
+        user.updateEmailInFirebase(auth,emailState)
+        user.updateEmailInFirebase(auth, nameState)
+        userSession(uid,nameState,emailState,comission,payday)
+        if(id==""){
+            resp = await user.insertUser()
+        }else{
+            resp = await user.updateUser(id)
+        }
         if(resp.message == 'success'){
             handleEdit()
             setFormMessage({
@@ -125,7 +132,7 @@ export default function UserAccount(){
             })
         });
         return unsub
-    }, [uid])
+    }, [db, uid])
     return (
         <div>
             <HeaderMenu>

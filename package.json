@@ -20,7 +20,8 @@
     "react-input-mask": "^2.0.4",
     "sass": "^1.43.4",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^2.0.4"
+    "semantic-ui-react": "^2.0.4",
+    "vercel": "^23.1.2"
   },
   "devDependencies": {
     "@types/node": "^16.11.9",

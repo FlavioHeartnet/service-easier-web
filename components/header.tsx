@@ -11,7 +11,6 @@ import {
 import styles from './../styles/Header.module.scss'
 import {useRouter} from 'next/router'
 import { signOut,onAuthStateChanged  } from "firebase/auth";
-import {auth } from './../firebase'
 import { useAuth } from './contexts/authContext';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types'
@@ -122,14 +121,14 @@ MobileContainer.propTypes = {
 }
 export default function Header({ children }){
     const router = useRouter()
-    const {userSession} = useAuth()
+    const {userSession, auth} = useAuth()
 
     useEffect(() => {
         let mounted = true
         if(mounted){
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                userSession(user.uid,user.email,2,0)
+                userSession(user.uid,user.displayName,user.email,2,0)
             } else {  
               router.push('/')
             }
@@ -138,7 +137,7 @@ export default function Header({ children }){
           return () =>{
             mounted = false
           }
-    }, [router, userSession])
+    }, [auth, router, userSession])
       
     function handleroute(url){
         router.push({

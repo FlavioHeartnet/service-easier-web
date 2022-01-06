@@ -1,16 +1,18 @@
 import Head from 'next/head'
 import styles from '../styles/Login.module.scss'
-import {Form, Button, Message, Segment, Container,Modal} from 'semantic-ui-react'
+import {Form, Button, Message, Segment, Container} from 'semantic-ui-react'
 import { useState } from 'react'
-import {auth, GoogleProvider} from './../firebase'
 import { signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from "firebase/auth";
 import {useRouter} from 'next/router'
 import localizeErrorMap from './../Utils/firebaseMessagesBr'
 import Messages from '../components/messages'
-export default function Login() {
-  const router = useRouter()
-  auth.useDeviceLanguage()
+import { useAuth } from '../components/contexts/authContext';
 
+  
+export default function Login() {
+  const {auth} = useAuth()
+  auth.useDeviceLanguage()
+  const router = useRouter()
   const [isLoading, setLoading] = useState(false)
   const [email, setEmail] =  useState("")
   const [password, setPassword] = useState("")
@@ -22,9 +24,8 @@ export default function Login() {
       content:'',
       hidden: true
   })
-  const [messageWidget, setMessageWidget] = useState(<></>)
   function loginGoogle(){
-    signInWithPopup(auth, GoogleProvider)
+    signInWithPopup(auth, new GoogleAuthProvider())
     .then((result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
       const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -69,7 +70,6 @@ export default function Login() {
   }
 
   function forgotPassword(){
-    setMessageWidget(<></>)
     if(email === ''){
       setFormMessage({
           error: true,
