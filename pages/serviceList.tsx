@@ -168,6 +168,9 @@ export default function ServiceList(){
                 date: moment.unix(docService.serviceDate.seconds).toDate()
             });
         });
+        let rent = Math.round(services.reduce((acc,c) => acc + parseFloat(c.price), 0))
+        setRent(rent)
+        setProfit(rent/2)
         setList(services)
     }
     return(
