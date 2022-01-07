@@ -7,7 +7,7 @@ interface IService{
         name?: string,
         service?:string,
         price?: number,
-        serviceDate?: string
+        serviceDate?: Date
 }
 
 export default class Service extends BaseAdapter implements IService{
@@ -17,7 +17,7 @@ export default class Service extends BaseAdapter implements IService{
         public name?: string,
         public service?:string,
         public price?: number,
-        public serviceDate?: string){
+        public serviceDate?: Date){
         super();
     }
 
@@ -45,13 +45,14 @@ export default class Service extends BaseAdapter implements IService{
             service: this.service,
             name: this.name,
             price: this.price,
-            serviceDate: this.serviceDate,
+            serviceDate: new Date(this.serviceDate),
             timestamp: serverTimestamp()
           }
         return this.insert(newService, Service.COLLECTION_NAME)
     }
 
     updateService(id:string):Promise<{message}>{
+        console.log(this.serviceDate)
         return this.update(
             new Service(id,this.uid,this.name,this.service,this.price,this.serviceDate),
             id,
