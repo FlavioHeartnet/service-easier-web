@@ -1,10 +1,10 @@
-import {Table, Container, Button, Dimmer, Loader, Segment, Icon, Dropdown, Input} from 'semantic-ui-react'
+import {Table, Container, Button, Dimmer, Loader, Segment, Dropdown, Input} from 'semantic-ui-react'
 import Header from './../components/header'
 import Moment from 'moment'
 import { useEffect, useState } from 'react'
 import {db} from './../firebase'
 import Service from './../model/service'
-import { collection, query, where,onSnapshot, limit, getDocs } from "firebase/firestore";
+import { collection, query, where,onSnapshot, limit, getDocs, orderBy } from "firebase/firestore";
 import moment from 'moment'
 import { useAuth } from '../components/contexts/authContext'
 import CustomModalDelete from '../components/customModalDelete'
@@ -36,7 +36,6 @@ export default function ServiceList(){
         setFilter30(true)
         
         firebaseServiceList.map((docService)=>{  
-            
             const getnow = Moment()
             const serviceDate = Moment(docService.serviceDate)
             const diff = getnow.diff(serviceDate, 'days')
@@ -94,7 +93,7 @@ export default function ServiceList(){
         setLoadingData(true)
         try{
             if(uid!= undefined && uid!= null){
-                const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid),limit(250));
+                const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid),orderBy("serviceDate", "desc"),limit(250));
                 const unsub = onSnapshot(q, (querySnapshot) => {
                     querySnapshot.docChanges().forEach((change) => {
                         setLoadingData(false) 
@@ -105,7 +104,7 @@ export default function ServiceList(){
                                 docService.name,
                                 docService.service,
                                 docService.price,
-                                docService.serviceDate
+                                moment.unix(docService.serviceDate.seconds).toDate()
                             ));
                             
                             
@@ -118,7 +117,7 @@ export default function ServiceList(){
                                  docService.name,
                                  docService.service,
                                  docService.price,
-                                 docService.serviceDate
+                                 moment.unix(docService.serviceDate.seconds).toDate()
                              );
                              let serviceItemToModify = services.filter((a)=> a.id === modifyService.id)
                              services[services.indexOf(serviceItemToModify[0])] = modifyService
@@ -155,7 +154,7 @@ export default function ServiceList(){
     }
     async function searchServices(){
         setisFilterOpen(!isFilterOpen)
-        const q = query(collection(db, Service.COLLECTION_NAME), where("timestamp", ">=", moment(dateFilterInitial).toDate()), where("timestamp", "<=", moment(dateFilterFinal).toDate()));
+        const q = query(collection(db, Service.COLLECTION_NAME), where("serviceDate", ">=", moment(dateFilterInitial).toDate()), where("serviceDate", "<=", moment(dateFilterFinal).toDate()), orderBy("serviceDate","desc"));
         const querySnapshot = await getDocs(q);
         const services = []
         querySnapshot.forEach((doc) => {
@@ -166,7 +165,7 @@ export default function ServiceList(){
                 service: docService.service,
                 client: docService.name,
                 price: docService.price,
-                date: docService.serviceDate
+                date: moment.unix(docService.serviceDate.seconds).toDate()
             });
         });
         setList(services)

@@ -50,7 +50,7 @@ function CustomModalUpdate(props) {
 
     function update(){
         if(props.client != name || props.price.toString() != priceFormatDb().toString() || props.service != service || props.date != serviceDate  ){
-            props.updateService(props.id, name,service,priceFormatDb(),serviceDate)
+            props.updateService(props.id, name,service,priceFormatDb(),moment(serviceDate).toDate())
         }else{
             alert(props.client + '   '+ props.service)
         }
