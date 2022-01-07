@@ -181,7 +181,7 @@ export default function ServiceList(){
                 <h2>Serviços realizados</h2>
                 <Button loading={isFilterLoad7} onClick={() =>filter(7)}  basic={isFilter7} color='pink'>7 dias</Button>
                 <Button loading={isFilterLoad15} onClick={() =>filter(15)} basic={isFilter15}  color='pink'>15 dias</Button>
-                <Button loading={isFilterLoad30} onClick={() =>filter(30)} basic={isFilter30}  color='pink'>30 dias</Button>
+                <Button loading={isFilterLoad30} onClick={() =>filter(30)} basic={isFilter30}  color='pink'>30 dias</Button><p></p>
                 <Dropdown onOpen={()=> setisFilterOpen(!isFilterOpen)} open={isFilterOpen} text='Busca personalizada' icon='filter' floating button>
                     <Dropdown.Menu >
                         <Dropdown.Item>
@@ -204,7 +204,7 @@ export default function ServiceList(){
                         
                     </Dropdown.Menu>
                 </Dropdown>
-                <Table size='large' color='pink' unstackable selectable> 
+                <Table size='large' color='pink' stackable selectable> 
                     <Table.Header>
                         <Table.HeaderCell>Serviço</Table.HeaderCell>
                         <Table.HeaderCell>Cliente</Table.HeaderCell>
