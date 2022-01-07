@@ -1,10 +1,10 @@
-import {Table, Container, Button, Dimmer, Loader, Segment, Icon} from 'semantic-ui-react'
+import {Table, Container, Button, Dimmer, Loader, Segment, Icon, Dropdown, Input} from 'semantic-ui-react'
 import Header from './../components/header'
 import Moment from 'moment'
 import { useEffect, useState } from 'react'
 import {db} from './../firebase'
 import Service from './../model/service'
-import { collection, query, where, addDoc,onSnapshot, limit  } from "firebase/firestore";
+import { collection, query, where,onSnapshot, limit, getDocs } from "firebase/firestore";
 import moment from 'moment'
 import { useAuth } from '../components/contexts/authContext'
 import CustomModalDelete from '../components/customModalDelete'
@@ -24,6 +24,9 @@ export default function ServiceList(){
     const [rentability, setRent] = useState(0)
     const [profit, setProfit] = useState(0)
     const [isLoadingData, setLoadingData] = useState(false)
+    const [isFilterOpen, setisFilterOpen] = useState(false)
+    const [dateFilterInitial, setdateFilterInitial] = useState("")
+    const [dateFilterFinal, setdateFilterFinal] = useState("")
     const dateFormat = 'DD/MM/YYYY'
     async function filter(days:number){ 
         let rent = 0
@@ -150,6 +153,24 @@ export default function ServiceList(){
             reloadListbyFilter()
         }
     }
+    async function searchServices(){
+        setisFilterOpen(!isFilterOpen)
+        const q = query(collection(db, Service.COLLECTION_NAME), where("timestamp", ">=", moment(dateFilterInitial).toDate()), where("timestamp", "<=", moment(dateFilterFinal).toDate()));
+        const querySnapshot = await getDocs(q);
+        const services = []
+        querySnapshot.forEach((doc) => {
+            console.log(doc.id, " => ", doc.data());
+            const docService = doc.data()
+            services.push({
+                id: docService.id,
+                service: docService.service,
+                client: docService.name,
+                price: docService.price,
+                date: docService.serviceDate
+            });
+        });
+        setList(services)
+    }
     return(
         <div>
             <Header>
@@ -162,6 +183,28 @@ export default function ServiceList(){
                 <Button loading={isFilterLoad7} onClick={() =>filter(7)}  basic={isFilter7} color='pink'>7 dias</Button>
                 <Button loading={isFilterLoad15} onClick={() =>filter(15)} basic={isFilter15}  color='pink'>15 dias</Button>
                 <Button loading={isFilterLoad30} onClick={() =>filter(30)} basic={isFilter30}  color='pink'>30 dias</Button>
+                <Dropdown onOpen={()=> setisFilterOpen(!isFilterOpen)} open={isFilterOpen} text='Busca personalizada' icon='filter' floating button>
+                    <Dropdown.Menu >
+                        <Dropdown.Item>
+                            <Input action={{
+                                color: 'pink',
+                                labelPosition: 'left',
+                                icon: 'filter',
+                                content: 'Data incial',
+                                }} actionPosition='left' onChange={(e)=> setdateFilterInitial(e.target.value)} placeholder='Data inicial' type='date'/>
+                        </Dropdown.Item>
+                        <Dropdown.Divider/>
+                        <Dropdown.Item><Input action={{
+                            color: 'pink',
+                            labelPosition: 'left',
+                            icon: 'filter',
+                            content: 'Data final',
+                            }} actionPosition='left' onChange={(e)=> setdateFilterFinal(e.target.value)} placeholder='Data final' type='date'/></Dropdown.Item>
+                        <Dropdown.Divider/>
+                        <Dropdown.Item><Button onClick={()=> searchServices()} fluid color='pink'>Buscar</Button></Dropdown.Item>
+                        
+                    </Dropdown.Menu>
+                </Dropdown>
                 <Table size='large' color='pink' unstackable selectable> 
                     <Table.Header>
                         <Table.HeaderCell>Serviço</Table.HeaderCell>
