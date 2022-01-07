@@ -141,7 +141,7 @@ export default function UserAccount(){
                 <Button onClick={handleEdit} color='pink'>{editButtonState}</Button>
                 <Messages {...formMessage}/>
                 <Segment raised>
-                <Form onSubmit={updatePesonalData}>
+                <Form>
                     
                     <Form.Field>
                         <label>Nome</label>
@@ -160,7 +160,7 @@ export default function UserAccount(){
                         <input value={phone} onChange={(e) => setPhone(e.target.value)} disabled={isDisabled} type='text'/>
                     </Form.Field>
                     
-                    <Button disabled={isDisabled} color='pink'>Salvar</Button>
+                    <Button disabled={isDisabled} type="button" onClick={updatePesonalData} color='pink'>Salvar</Button>
                 </Form>
                 </Segment>
                 <Segment raised>
