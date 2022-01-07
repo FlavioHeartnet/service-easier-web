@@ -136,12 +136,12 @@ export default function Login() {
           <input placeholder={'Digite sua senha'} required onChange={(e)=> setPassword(e.target.value)} type='password' />
       </Form.Field>
       <br/>
-      <div className={styles.buttons}>
-        <Button loading={isLoading} color='pink'>Entrar</Button>
-        <Button type={'button'} color='red' onClick={loginGoogle}>Entrar com Google</Button>
-        <Button onClick={()=> router.push('/signup')} type={'button'}>Não tem acesso?</Button>
-        <Button basic onClick={forgotPassword} type={'button'}>Esqueceu a senha?</Button>
-      </div>
+      <Container fluid>
+        <Button fluid loading={isLoading} color='pink'>Entrar</Button><br/>
+        <Button fluid type={'button'} color='red' onClick={loginGoogle}>Entrar com Google</Button><br/>
+        <Button fluid onClick={()=> router.push('/signup')} type={'button'}>Não tem acesso?</Button><br/>
+        <Button fluid basic onClick={forgotPassword} type={'button'}>Esqueceu a senha?</Button><br/>
+      </Container>
       </Form>
       
       </main>
