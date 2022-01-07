@@ -48,7 +48,7 @@ export default function AddService(){
         setLoading(true)
         try{
         if(validadeDate(serviceDate)){
-            const serviceObject = new Service("",uid, name, service, parseFloat(priceFormated),serviceDate)
+            const serviceObject = new Service("",uid, name, service, parseFloat(priceFormated),moment(serviceDate).toDate())
             await serviceObject.insertService()
             clearInputs()
             setLoading(false)
