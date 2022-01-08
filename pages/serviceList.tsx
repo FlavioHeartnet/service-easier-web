@@ -1,95 +1,26 @@
-import {Table, Container, Button, Dimmer, Loader, Segment, Dropdown, Input, Grid, Item, Icon} from 'semantic-ui-react'
+import { Container, Dimmer, Loader, Segment, Grid, Icon} from 'semantic-ui-react'
 import Header from './../components/header'
-import Moment from 'moment'
 import { useEffect, useState } from 'react'
 import {db} from './../firebase'
 import Service from './../model/service'
-import { collection, query, where,onSnapshot, limit, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where,onSnapshot, limit, orderBy } from "firebase/firestore";
 import moment from 'moment'
 import { useAuth } from '../components/contexts/authContext'
 import CustomModalDelete from '../components/customModalDelete'
 import CustomModalUpdate from '../components/customModalUpdate'
-import { calcComission, validateComission, validatePayDay } from '../Utils/validations'
+import { priceFormat } from '../Utils/validations'
+import BillingResume from '../components/billingResume'
+import FilterButtons from '../components/filterButtons'
 export default function ServiceList(){
   
-    const {uid, updateTitlePage, comission, payday} = useAuth()
+    const {uid, updateTitlePage, profit,rentability, serviceList, updateCurrentList, currentDayFilter} = useAuth()
     updateTitlePage("Serviços Realizados")
     const currentCurrency = 'br'
     const [firebaseServiceList, setFirebaseServiceList] = useState([new Service()])
-    const [currentList, setList] = useState([])
-    const [isFilter7, setFilter7] = useState(true)
-    const [isFilter15, setFilter15] = useState(true)
-    const [isFilter30, setFilter30] = useState(true)
-    const [isFilterLoad7, setFilterLoad7] = useState(false)
-    const [isFilterLoad15, setFilterLoad15] = useState(false)
-    const [isFilterLoad30, setFilterLoad30] = useState(false)
-    const [rentability, setRent] = useState(0)
-    const [profit, setProfit] = useState(0)
     const [isLoadingData, setLoadingData] = useState(false)
-    const [isFilterOpen, setisFilterOpen] = useState(false)
-    const [dateFilterInitial, setdateFilterInitial] = useState("")
-    const [dateFilterFinal, setdateFilterFinal] = useState("")
     const dateFormat = 'DD/MM/YYYY'
-    async function filter(days:number){ 
-        const serviceList = []
-        setFilter7(true)
-        setFilter15(true)
-        setFilter30(true)
-        
-        firebaseServiceList.map((docService)=>{  
-            const getnow = Moment()
-            const serviceDate = Moment(docService.serviceDate)
-            const diff = getnow.diff(serviceDate, 'days')
-            if(diff <= days){
-                serviceList.push({
-                    id: docService.id,
-                    service: docService.service,
-                    client: docService.name,
-                    price: docService.price,
-                    date: docService.serviceDate
-                })    
-            }
-        })
-        serviceList.sort((a,b) => {
-            return +moment(b.date).toDate() - +moment(a.date).toDate()
-        })
-            
-            let rent = calcComission(serviceList, comission == null ? 100 : comission)
-            setRent(rent[0])
-            setProfit(rent[1])
-            setList(serviceList)
-            setRent(rent[0])
-            setProfit(rent[1])
-        if(days === 7){
-            setFilter7(false)
-            setFilterLoad7(true)
-        }else if(days === 15 ){
-            setFilter15(false)
-            setFilterLoad15(true)
-        }else if(days === 30){
-            setFilter30(false)
-            setFilterLoad30(true)
-        }
-        setFilterLoad7(false)
-        setFilterLoad15(false)
-        setFilterLoad30(false)
-        
-    }
 
-    function reloadListbyFilter(){
-        let numberofdays = 7
-        if(!isFilter15){
-            numberofdays = 15
-        }else if(!isFilter30){
-            numberofdays = 30
-        }
-        filter(numberofdays)
-    }
-    function priceFormat(price:number, currency:string):string{
-        switch(currency){
-            case 'br': return 'R$ '+ price.toString().replace('.',',')
-        }
-    }
+    
     
     useEffect(() => {
         let services: Service[] = []
@@ -133,6 +64,7 @@ export default function ServiceList(){
                         }
                         });
                         setFirebaseServiceList(services)
+                        updateCurrentList(currentDayFilter,services)
                 });
                 
                 }
@@ -140,42 +72,19 @@ export default function ServiceList(){
         }catch(e){
             console.log(e)
         }
-    },[uid])
+    },[currentDayFilter, uid])
 
    async function deleteService(id:string){
         const service = new Service(id)
         const resp = await service.deleteService()
         if(resp.message == 'success'){
-            reloadListbyFilter()
+            updateCurrentList(currentDayFilter,firebaseServiceList)
         }
     }
     async function updateService(id, name,service,price,date){
         const resp = await new Service(id,uid, name,service,price,date).updateService(id)
-        if(resp.message == 'success'){
-            reloadListbyFilter()
-        }
-    }
-    async function searchServices(){
-        setisFilterOpen(!isFilterOpen)
-        if(dateFilterInitial != "" && dateFilterFinal != ""){
-        const q = query(collection(db, Service.COLLECTION_NAME), where("serviceDate", ">=", moment(dateFilterInitial).toDate()), where("serviceDate", "<=", moment(dateFilterFinal).toDate()),where("uid", "==", uid), orderBy("serviceDate","desc"));
-        const querySnapshot = await getDocs(q);
-        const services = []
-        querySnapshot.forEach((doc) => {
-            console.log(doc.id, " => ", doc.data());
-            const docService = doc.data()
-            services.push({
-                id: docService.id,
-                service: docService.service,
-                client: docService.name,
-                price: docService.price,
-                date: moment.unix(docService.serviceDate.seconds).toDate()
-            });
-        });
-        let rent = calcComission(services, comission == null ? 100 : comission)
-        setRent(rent[0])
-        setProfit(rent[1])
-        setList(services)
+        if(resp.message == 'success'){ 
+            updateCurrentList(currentDayFilter,firebaseServiceList)
         }
     }
     return(
@@ -187,45 +96,9 @@ export default function ServiceList(){
                      <Loader inverted/>
                 </Dimmer>   
                 <p/>
-                <Item.Group>
-                <Item>
-                <Item.Content>
-                    <Item.Meta>Comissão atual</Item.Meta>
-                    <Item.Header>{priceFormat(profit, currentCurrency)}</Item.Header>
-                    <Item.Description>
-                        Faturamento atual: <b>{priceFormat(rentability, currentCurrency)}</b>
-                    </Item.Description>
-                    <Item.Extra>% da comissão: <b>{validateComission(comission)}%</b></Item.Extra>
-                    <Item.Extra>Data de recebimento a cada: <b>{validatePayDay(payday)} dias</b></Item.Extra>
-                </Item.Content>
-                </Item>
-                </Item.Group>
-                <Button loading={isFilterLoad7} onClick={() =>filter(7)}  basic={isFilter7} color='pink'>7 dias</Button>
-                <Button loading={isFilterLoad15} onClick={() =>filter(15)} basic={isFilter15}  color='pink'>15 dias</Button>
-                <Button loading={isFilterLoad30} onClick={() =>filter(30)} basic={isFilter30}  color='pink'>30 dias</Button><p></p>
-                <Dropdown onOpen={()=> setisFilterOpen(!isFilterOpen)} open={isFilterOpen} text='Busca personalizada' icon='filter' floating button>
-                    <Dropdown.Menu >
-                        <Dropdown.Item>
-                            <Input action={{
-                                color: 'pink',
-                                labelPosition: 'left',
-                                icon: 'filter',
-                                content: 'Data incial',
-                                }} actionPosition='left' onChange={(e)=> setdateFilterInitial(e.target.value)} placeholder='Data inicial' type='date'/>
-                        </Dropdown.Item>
-                        <Dropdown.Divider/>
-                        <Dropdown.Item><Input action={{
-                            color: 'pink',
-                            labelPosition: 'left',
-                            icon: 'filter',
-                            content: 'Data final',
-                            }} actionPosition='left' onChange={(e)=> setdateFilterFinal(e.target.value)} placeholder='Data final' type='date'/></Dropdown.Item>
-                        <Dropdown.Divider/>
-                        <Dropdown.Item><Button onClick={()=> searchServices()} fluid color='pink'>Buscar</Button></Dropdown.Item>
-                        
-                    </Dropdown.Menu>
-                </Dropdown>
-                {currentList.map(({ id,service, client, price, date },x) => (
+                <BillingResume profit={profit} currentCurrency={currentCurrency} rentability={rentability}/>
+                <FilterButtons firebaseServiceList={firebaseServiceList} />
+                {serviceList.map(({ id,service, name, price, serviceDate },x) => (
                 <Segment vertical key={x}>
                     <Grid padded>
                     <Grid.Row columns={3}>
@@ -233,12 +106,12 @@ export default function ServiceList(){
                         <Grid.Column width={7}>
                             <span><b>{priceFormat(price,currentCurrency)}</b></span><br/>
                             <span style={{"color": "rgba(0,0,0,.4)"}}><b>{service}</b></span><br/>
-                            <span style={{"color": "rgba(0,0,0,.4)"}}>{client}</span>
+                            <span style={{"color": "rgba(0,0,0,.4)"}}>{name}</span>
                         </Grid.Column>
                         <Grid.Column textAlign='right' width={'6'}>
-                            <p><b>{moment(date).format(dateFormat)}</b></p>
+                            <p><b>{moment(serviceDate).format(dateFormat)}</b></p>
                             <Grid.Row>
-                                <CustomModalUpdate {...{ id,client, service, price, date }} updateService={updateService}/>
+                                <CustomModalUpdate {...{ id,name, service, price, serviceDate }} updateService={updateService}/>
                                 <CustomModalDelete id={id} deleteService={deleteService}/>  
                             </Grid.Row>
                         </Grid.Column>

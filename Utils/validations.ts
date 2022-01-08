@@ -47,3 +47,9 @@ export function validateComission(comission:number):number{
 export function validatePayDay(payday:number):number{
 	return payday == 0 ? 100: payday
 }
+
+export function priceFormat(price:number, currency:string):string{
+	switch(currency){
+		case 'br': return 'R$ '+ price.toString().replace('.',',')
+	}
+}

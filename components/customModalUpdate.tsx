@@ -32,12 +32,12 @@ function CustomModalUpdate(props) {
     const [serviceDate, setDate] = useState("")
     const [mask, setMask] = useState({})
     useEffect(() => {
-        setName(props.client)
+        setName(props.name)
         setPrice(props.price)
         setMask({value: 'R$ '+ props.price}) //value that will really apear on price field
         setService(props.service)
-        setDate(moment(props.date).format('YYYY-MM-DD'))
-    }, [props.client, props.price, props.service, props.date])
+        setDate(moment(props.serviceDate).format('YYYY-MM-DD'))
+    }, [props.name, props.price, props.service, props.serviceDate])
     
     function setValuePrice(e){ 
         let  value:string  = e.target.value.toString();
