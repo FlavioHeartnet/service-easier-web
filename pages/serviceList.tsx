@@ -207,7 +207,7 @@ export default function ServiceList(){
                         
                     </Dropdown.Menu>
                 </Dropdown>
-                <Table size='large' color='pink' stackable selectable> 
+                <Table size='small' color='pink' stackable selectable> 
                     <Table.Header>
                         <Table.HeaderCell>Serviço</Table.HeaderCell>
                         <Table.HeaderCell>Cliente</Table.HeaderCell>
@@ -218,7 +218,7 @@ export default function ServiceList(){
                     <Table.Body>
 
                         {currentList.map(({ id,service, client, price, date },x) => (
-                        <Table.Row key={x}>
+                        <Table.Row key={x} textAlign='center'>
                             <Table.Cell>{service}</Table.Cell>
                             <Table.Cell>{client}</Table.Cell>
                             <Table.Cell>{priceFormat(price,currentCurrency)}</Table.Cell>
