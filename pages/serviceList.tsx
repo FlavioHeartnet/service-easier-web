@@ -154,6 +154,7 @@ export default function ServiceList(){
     }
     async function searchServices(){
         setisFilterOpen(!isFilterOpen)
+        if(dateFilterInitial != "" && dateFilterFinal != ""){
         const q = query(collection(db, Service.COLLECTION_NAME), where("serviceDate", ">=", moment(dateFilterInitial).toDate()), where("serviceDate", "<=", moment(dateFilterFinal).toDate()),where("uid", "==", uid), orderBy("serviceDate","desc"));
         const querySnapshot = await getDocs(q);
         const services = []
@@ -172,6 +173,7 @@ export default function ServiceList(){
         setRent(rent)
         setProfit(rent/2)
         setList(services)
+        }
     }
     return(
         <div>
