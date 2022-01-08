@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, QueryConstraint, setDoc, updateDoc, where } from 'firebase/firestore';
 import {db} from './../firebase'
 export default class BaseAdapter {
 
@@ -30,5 +30,10 @@ export default class BaseAdapter {
             return {message: e}
         }
         
+    }
+
+    protected async getDocuments(colletionName:string, where: QueryConstraint[]){
+        const q = query(collection(db, colletionName), ...where);
+        return await getDocs(q)
     }
 }

@@ -9,9 +9,10 @@ import moment from 'moment'
 import { useAuth } from '../components/contexts/authContext'
 import CustomModalDelete from '../components/customModalDelete'
 import CustomModalUpdate from '../components/customModalUpdate'
+import { calcComission, validateComission, validatePayDay } from '../Utils/validations'
 export default function ServiceList(){
   
-    const {uid, updateTitlePage} = useAuth()
+    const {uid, updateTitlePage, comission, payday} = useAuth()
     updateTitlePage("Serviços Realizados")
     const currentCurrency = 'br'
     const [firebaseServiceList, setFirebaseServiceList] = useState([new Service()])
@@ -30,7 +31,6 @@ export default function ServiceList(){
     const [dateFilterFinal, setdateFilterFinal] = useState("")
     const dateFormat = 'DD/MM/YYYY'
     async function filter(days:number){ 
-        let rent = 0
         const serviceList = []
         setFilter7(true)
         setFilter15(true)
@@ -54,10 +54,12 @@ export default function ServiceList(){
             return +moment(b.date).toDate() - +moment(a.date).toDate()
         })
             
-            rent = Math.round(serviceList.reduce((acc,c) => acc + parseFloat(c.price), 0))
+            let rent = calcComission(serviceList, comission == null ? 100 : comission)
+            setRent(rent[0])
+            setProfit(rent[1])
             setList(serviceList)
-            setRent(rent)
-            setProfit(rent/2)
+            setRent(rent[0])
+            setProfit(rent[1])
         if(days === 7){
             setFilter7(false)
             setFilterLoad7(true)
@@ -170,9 +172,9 @@ export default function ServiceList(){
                 date: moment.unix(docService.serviceDate.seconds).toDate()
             });
         });
-        let rent = Math.round(services.reduce((acc,c) => acc + parseFloat(c.price), 0))
-        setRent(rent)
-        setProfit(rent/2)
+        let rent = calcComission(services, comission == null ? 100 : comission)
+        setRent(rent[0])
+        setProfit(rent[1])
         setList(services)
         }
     }
@@ -191,8 +193,10 @@ export default function ServiceList(){
                     <Item.Meta>Comissão atual</Item.Meta>
                     <Item.Header>{priceFormat(profit, currentCurrency)}</Item.Header>
                     <Item.Description>
+                        Faturamento atual: <b>{priceFormat(rentability, currentCurrency)}</b>
                     </Item.Description>
-                    <Item.Extra>Faturamento atual: <b>{priceFormat(rentability, currentCurrency)}</b></Item.Extra>
+                    <Item.Extra>% da comissão: <b>{validateComission(comission)}%</b></Item.Extra>
+                    <Item.Extra>Data de recebimento a cada: <b>{validatePayDay(payday)} dias</b></Item.Extra>
                 </Item.Content>
                 </Item>
                 </Item.Group>

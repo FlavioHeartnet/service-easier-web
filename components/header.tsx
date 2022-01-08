@@ -14,6 +14,8 @@ import { signOut,onAuthStateChanged  } from "firebase/auth";
 import { useAuth } from './contexts/authContext';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types'
+import User from '../model/user';
+import { validateComission, validatePayDay } from '../Utils/validations';
 const { MediaContextProvider, Media } = createMedia({
     breakpoints: {
       mobile: 0,
@@ -141,7 +143,8 @@ export default function Header({ children }){
         if(mounted){
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                userSession(user.uid,user.displayName,user.email,2,0)
+                const currentUser = await new User().getUserbyUid(user.uid)
+                userSession(user.uid,user.displayName,user.email,validateComission(currentUser.comission),validatePayDay(currentUser.payday))
             } else {  
               router.push('/')
             }
