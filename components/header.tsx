@@ -1,9 +1,9 @@
 import {
     Button,
     Container,
+    Grid,
     Icon,
     Menu,
-    Segment,
     Sidebar,
     Visibility,
   } from 'semantic-ui-react'
@@ -21,7 +21,18 @@ const { MediaContextProvider, Media } = createMedia({
       computer: 1024,
     },
   })
-
+const HeaderTitle = ()=>{
+  const {titlePages} = useAuth()
+  return (
+    <Container >
+      <Grid textAlign='center' style={{ height: '18vh' }}  verticalAlign='middle'>
+        <Grid.Column>
+        <h1 style={{ fontSize: '4vh', color: 'white' }}>{titlePages}</h1>
+        </Grid.Column>
+      </Grid>
+    </Container>
+  )
+}
 const DesktopContainer=(props)=>{
     const [fixed , setFixed] = useState(false)
     
@@ -56,6 +67,7 @@ const DesktopContainer=(props)=>{
                                 Log out
                               </Button></Menu.Item>
                     </Menu>
+                    <HeaderTitle/>
                     </div>
                 </Visibility>
                 {props.children}
@@ -103,6 +115,7 @@ const MobileContainer = (props)=>{
                     Log out
                   </Button></Menu.Item>
                 </Menu>
+                <HeaderTitle/>
               </Container>
               </div>
             

@@ -17,7 +17,8 @@ export default function UserAccount(){
         content:'',
         hidden: true
     }
-    const {uid, auth, db, name,email, userSession} = useAuth()
+    const {uid, auth, db, name,email, userSession, updateTitlePage} = useAuth()
+    updateTitlePage("Sua Conta")
     const [id, setId] = useState("")
     const [isDisabled, setDisabled] = useState(true)
     const [nameState, setName] = useState(name)
@@ -137,8 +138,7 @@ export default function UserAccount(){
         <div>
             <HeaderMenu>
             <Container>
-                <h1>Sua Conta</h1>
-                <Button onClick={handleEdit} color='pink'>{editButtonState}</Button>
+                <Button circular onClick={handleEdit} color='pink'>{editButtonState}</Button>
                 <Messages {...formMessage}/>
                 <Segment raised>
                 <Form>
@@ -159,8 +159,16 @@ export default function UserAccount(){
                         <label>Contato</label>
                         <input value={phone} onChange={(e) => setPhone(e.target.value)} disabled={isDisabled} type='text'/>
                     </Form.Field>
-                    
-                    <Button disabled={isDisabled} type="button" onClick={updatePesonalData} color='pink'>Salvar</Button>
+                    <Form.Field>
+                        <label>% da comissão</label>
+                        <input value={comission} onChange={(e) => setComission(e.target.value)} disabled={isDisabled} type='number'/>
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Periodo de recebimento</label>
+                        <input value={payday} onChange={(e) => setPayday(e.target.value)} disabled={isDisabled} type='text'/>
+                    </Form.Field>
+                
+                    <Button fluid disabled={isDisabled} type="button" onClick={updatePesonalData} color='pink'>Salvar</Button>
                 </Form>
                 </Segment>
                 <Segment raised>
@@ -174,21 +182,7 @@ export default function UserAccount(){
                             <label>Confirmar Senha</label>
                             <input  onChange={(e) => setConfPassword(e.target.value)} disabled={isDisabled} type='password'/>
                         </Form.Field>
-                        <Button disabled={isDisabled} color='pink'>Alterar</Button>
-                        </Form>
-                    </Segment>
-                    <Segment raised>
-                    <h2>Configuração de conta</h2>
-                        <Form>
-                        <Form.Field>
-                            <label>% da comissão</label>
-                            <input value={comission} onChange={(e) => setComission(e.target.value)} disabled={isDisabled} type='number'/>
-                        </Form.Field>
-                        <Form.Field>
-                            <label>Periodo de recebimento</label>
-                            <input value={payday} onChange={(e) => setPayday(e.target.value)} disabled={isDisabled} type='text'/>
-                        </Form.Field>
-                        <Button disabled={isDisabled} onClick={updatePesonalData} color='pink'>Salvar</Button>
+                        <Button fluid disabled={isDisabled} color='pink'>Alterar</Button>
                         </Form>
                     </Segment>
             </Container>

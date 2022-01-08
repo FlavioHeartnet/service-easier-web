@@ -11,7 +11,8 @@ import CustomModalDelete from '../components/customModalDelete'
 import CustomModalUpdate from '../components/customModalUpdate'
 export default function ServiceList(){
   
-    const {uid} = useAuth()
+    const {uid, updateTitlePage} = useAuth()
+    updateTitlePage("Serviços Realizados")
     const currentCurrency = 'br'
     const [firebaseServiceList, setFirebaseServiceList] = useState([new Service()])
     const [currentList, setList] = useState([])
@@ -183,7 +184,6 @@ export default function ServiceList(){
                  <Dimmer active={isLoadingData} inverted>
                      <Loader inverted/>
                 </Dimmer>   
-                <h2>Serviços realizados</h2>
                 <p/>
                 <Item.Group>
                 <Item>
