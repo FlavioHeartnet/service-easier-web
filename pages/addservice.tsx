@@ -21,10 +21,15 @@ export default function AddService(){
         header:'',
         content:''
     })
-    
-     
-
-    
+    function resetStateForm() {
+        setFormSucess({sucess:false})
+        setFormMessage({
+            success: true,
+            error:false,
+            header:'',
+            content:''
+        })
+    }
     const {uid} = useAuth()
     function clearInputs(){
         setService('')
@@ -105,21 +110,21 @@ export default function AddService(){
                     <Message {...formMessage}/>
                     <Form.Field>
                         <label>Nome do cliente</label>
-                        <input placeholder='Digite o nome do cliente atendido' type={'text'} onChange={e=> setName(e.target.value)} value={name} required></input>
+                        <input onClick={resetStateForm} placeholder='Digite o nome do cliente atendido' type={'text'} onChange={e=> setName(e.target.value)} value={name} required></input>
                     </Form.Field>
                     <Form.Field>
                         <label>Nome do serviço</label>
-                        <input placeholder='Digite o nome do serviço realizado' type={'text'} onChange={e=> setService(e.target.value)} value={service} required></input>
+                        <input onClick={resetStateForm} placeholder='Digite o nome do serviço realizado' type={'text'} onChange={e=> setService(e.target.value)} value={service} required></input>
                     </Form.Field>
                     <Form.Field>
                         <label>Valor cobrado</label>
-                        <InputMask placeholder='Digite o valor cobrado' {...mask} onBlur={(e)=> setPrice(e.target.value)} onChange={e=> setValuePrice(e)} maskChar={null} />
+                        <InputMask onClick={resetStateForm} placeholder='Digite o valor cobrado' {...mask} onBlur={(e)=> setPrice(e.target.value)} onChange={e=> setValuePrice(e)} maskChar={null} />
                     </Form.Field>                 
                     <Form.Field>
                         <label>Data do serviço</label>
-                        <input placeholder='Digite quando o serviço foi realizado' type={'date'}  onChange={e=> setDate(e.target.value)} value={serviceDate} required></input>
+                        <input onClick={resetStateForm} placeholder='Digite quando o serviço foi realizado' type={'date'}  onChange={e=> setDate(e.target.value)} value={serviceDate} required></input>
                     </Form.Field> 
-                    <Button color='pink'>Inserir</Button>
+                    <Button fluid color='pink'>Inserir</Button>
                 </Form>
             </Container>
             </Header>

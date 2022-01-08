@@ -65,7 +65,7 @@ function CustomModalUpdate(props) {
             dispatch({ event: e.type, name: 'onClose', type: 'CLOSE_MODAL' })
           }
           open={open}
-          trigger={<Button icon color='pink'><Icon name='edit'/></Button>}
+          trigger={<Button size='mini' icon color='pink'><Icon name='edit'/></Button>}
         >
           <Modal.Header>Atualizar este Serviço?</Modal.Header>
           <Modal.Content>
