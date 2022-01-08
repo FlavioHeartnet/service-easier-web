@@ -1,5 +1,5 @@
 import { updateEmail, updateProfile } from "firebase/auth";
-import { serverTimestamp  } from "firebase/firestore";
+import { collection, query, serverTimestamp, where  } from "firebase/firestore";
 import BaseAdapter from "./baseAdapter";
 
 interface IUser {
@@ -24,7 +24,7 @@ export default class User extends BaseAdapter implements IUser  {
     payday: number;
     timestamp:Date
     static COLLECTION_NAME:string = 'user'
-    constructor(uid,cpf,phone, comission, payday, timestamp){
+    constructor(uid?,cpf?,phone?, comission?, payday?, timestamp?){
         super();
         this.uid = uid
         this.cpf = cpf
@@ -33,6 +33,7 @@ export default class User extends BaseAdapter implements IUser  {
         this.payday = payday
         this.timestamp = timestamp
     }
+
     
     converter(){
         return  {
@@ -90,6 +91,38 @@ async insertUser():Promise<{message}>{
       }).catch((error) => {
         return error
       });
+   }
+
+   async getUserbyUid(uid:string){
+      const snapshot = await this.getDocuments(User.COLLECTION_NAME, [where("uid", "==", uid)])
+      type UserType = {
+        id:string
+        uid:string
+        cpf:string
+        phone:string
+        comission:number
+        payday:number
+      }
+      let currentuser:UserType = {
+        id: "",
+        uid: "",
+        cpf: "",
+        phone: "",
+        comission: 0,
+        payday: 0
+      }
+      snapshot.forEach(item => {
+        const data = item.data()
+        currentuser = {
+          id: item.id,
+          uid: data.uid,
+          cpf: data.cpf,
+          phone: data.phone,
+          comission: data.comission,
+          payday: data.payday
+        }
+      })
+      return currentuser
    }
 
 

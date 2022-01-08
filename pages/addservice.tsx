@@ -8,6 +8,8 @@ import moment from 'moment'
 import { useAuth } from '../components/contexts/authContext'
 
 export default function AddService(){
+    const {updateTitlePage} = useAuth()
+    updateTitlePage("Lance aqui o serviço feito")
     const [isLoading, setLoading] = useState(false)
     const [service, setService] = useState("")
     const [name, setName] = useState("")
@@ -105,7 +107,6 @@ export default function AddService(){
             <Header >
             <br/>
             <Container>
-                <h1>Lance aqui o serviço feito</h1>
                 <Form {...isFormSucess} loading={isLoading} onSubmit={insertService}> 
                     <Message {...formMessage}/>
                     <Form.Field>

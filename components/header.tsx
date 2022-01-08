@@ -1,9 +1,9 @@
 import {
     Button,
     Container,
+    Grid,
     Icon,
     Menu,
-    Segment,
     Sidebar,
     Visibility,
   } from 'semantic-ui-react'
@@ -14,6 +14,8 @@ import { signOut,onAuthStateChanged  } from "firebase/auth";
 import { useAuth } from './contexts/authContext';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types'
+import User from '../model/user';
+import { validateComission, validatePayDay } from '../Utils/validations';
 const { MediaContextProvider, Media } = createMedia({
     breakpoints: {
       mobile: 0,
@@ -21,7 +23,18 @@ const { MediaContextProvider, Media } = createMedia({
       computer: 1024,
     },
   })
-
+const HeaderTitle = ()=>{
+  const {titlePages} = useAuth()
+  return (
+    <Container >
+      <Grid textAlign='center' style={{ height: '18vh' }}  verticalAlign='middle'>
+        <Grid.Column>
+        <h1 style={{ fontSize: '4vh', color: 'white' }}>{titlePages}</h1>
+        </Grid.Column>
+      </Grid>
+    </Container>
+  )
+}
 const DesktopContainer=(props)=>{
     const [fixed , setFixed] = useState(false)
     
@@ -56,6 +69,7 @@ const DesktopContainer=(props)=>{
                                 Log out
                               </Button></Menu.Item>
                     </Menu>
+                    <HeaderTitle/>
                     </div>
                 </Visibility>
                 {props.children}
@@ -103,6 +117,7 @@ const MobileContainer = (props)=>{
                     Log out
                   </Button></Menu.Item>
                 </Menu>
+                <HeaderTitle/>
               </Container>
               </div>
             
@@ -128,7 +143,8 @@ export default function Header({ children }){
         if(mounted){
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                userSession(user.uid,user.displayName,user.email,2,0)
+                const currentUser = await new User().getUserbyUid(user.uid)
+                userSession(user.uid,user.displayName,user.email,validateComission(currentUser.comission),validatePayDay(currentUser.payday))
             } else {  
               router.push('/')
             }

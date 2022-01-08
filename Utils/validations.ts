@@ -34,3 +34,16 @@ export default function validateCPF(cpf) {
 		return false;		
 	return true;   
 }
+
+export function calcComission(list: any[], comision):[number,number]{
+	let rent = Math.round(list.reduce((acc,c) => acc + parseFloat(c.price), 0))
+	return [rent, rent*(comision/100)]
+}
+
+export function validateComission(comission:number):number{
+	return comission == 0 ? 100: comission
+}
+
+export function validatePayDay(payday:number):number{
+	return payday == 0 ? 100: payday
+}

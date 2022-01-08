@@ -12,7 +12,9 @@ export type authContextType = {
     app: FirebaseApp,
     auth: Auth,
     db: Firestore
-    name:string
+    name:string,
+    titlePages:string,
+    updateTitlePage: (tittle:string)=>void
 };
 
 const firebaseConfig = {
@@ -34,7 +36,9 @@ const authContextDefaultValues: authContextType = {
     app: initializeApp(firebaseConfig),
     auth: null,
     db: null,
-    name:''
+    name:'',
+    titlePages:'',
+    updateTitlePage:()=>{}
 };
 
 const AuthContext = createContext<authContextType>(authContextDefaultValues);
@@ -56,14 +60,17 @@ export function AuthProvider({ children }: Props) {
     const app = authContextDefaultValues.app
     const auth = getAuth(authContextDefaultValues.app)
     const db = getFirestore(authContextDefaultValues.app)
+    const [titlePages, settitlePages] = useState("")
 
-
-    const userSession = (uid,email,name,comission,payday) => {
+    const userSession = (uid,name,email,comission,payday) => {
         setUid(uid)
         setName(name)
         setEmail(email)
         setComission(comission)
         setPayday(payday)
+    }
+    const updateTitlePage = (tittle:string)=>{
+        settitlePages(tittle)
     }
     const value = {
         uid,
@@ -74,7 +81,9 @@ export function AuthProvider({ children }: Props) {
         app,
         auth,
         db,
+        titlePages,
         userSession,
+        updateTitlePage
     }
     return (
         <>
