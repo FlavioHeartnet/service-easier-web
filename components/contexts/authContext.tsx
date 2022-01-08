@@ -3,6 +3,10 @@ import { Firestore, getFirestore } from 'firebase/firestore';
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { Auth, getAuth } from "firebase/auth";
 import config from "../../config";
+import moment from "moment";
+import { calcComission } from "../../Utils/validations";
+import Service from "../../model/service";
+
 export type authContextType = {
     uid: string
     email: string
@@ -14,7 +18,15 @@ export type authContextType = {
     db: Firestore
     name:string,
     titlePages:string,
-    updateTitlePage: (tittle:string)=>void
+    updateTitlePage: (tittle:string)=>void,
+    profit: number,
+    rentability: number,
+    updateRent: (profit:number, rentability:number)=>void,
+    serviceList: Service[],
+    updateServiceList: (service: Service[])=>void
+    updateCurrentList: (day:number, firebaseList: Service[]) => void,
+    currentDayFilter: number,
+    updateCurrentDayFilter: (day:number)=>void
 };
 
 const firebaseConfig = {
@@ -32,13 +44,21 @@ const authContextDefaultValues: authContextType = {
     email: '',
     comission: 0,
     payday: 15,
-    userSession: ()=>{},
+    userSession: () => { },
     app: initializeApp(firebaseConfig),
     auth: null,
     db: null,
-    name:'',
-    titlePages:'',
-    updateTitlePage:()=>{}
+    name: '',
+    titlePages: '',
+    updateTitlePage: () => { },
+    profit: 0,
+    rentability: 0,
+    updateRent: () => { },
+    serviceList: [],
+    updateServiceList: () => { },
+    updateCurrentList: () => { },
+    currentDayFilter: 0,
+    updateCurrentDayFilter: () => { }
 };
 
 const AuthContext = createContext<authContextType>(authContextDefaultValues);
@@ -61,7 +81,38 @@ export function AuthProvider({ children }: Props) {
     const auth = getAuth(authContextDefaultValues.app)
     const db = getFirestore(authContextDefaultValues.app)
     const [titlePages, settitlePages] = useState("")
+    const [rentability, setRent] = useState(0)
+    const [profit, setProfit] = useState(0)
+    const [serviceList, setserviceList] = useState([new Service('','','','',0,new Date())])
+    const [currentDayFilter, setcurrentDayFilter] = useState(7)
 
+    const updateCurrentList = (day:number, firebaseList)=> {
+        setcurrentDayFilter(day) 
+        const serviceList = []
+        firebaseList.map((docService)=>{  
+            const getnow = moment()
+            const serviceDate = moment(docService.serviceDate)
+            const diff = getnow.diff(serviceDate, 'days')
+            if(diff <= day){
+                serviceList.push({
+                    id: docService.id,
+                    service: docService.service,
+                    name: docService.name,
+                    price: docService.price,
+                    serviceDate: docService.serviceDate
+                })    
+            }
+        })
+        serviceList.sort((a,b) => {
+            return +moment(b.date).toDate() - +moment(a.date).toDate()
+        })
+        let rent = calcComission(serviceList, comission == null ? 100 : comission)
+        updateRent(rent[1], rent[0])
+        setserviceList(serviceList)
+    }
+    const updateCurrentDayFilter = (day:number)=>{
+        setcurrentDayFilter(day)
+    }
     const userSession = (uid,name,email,comission,payday) => {
         setUid(uid)
         setName(name)
@@ -71,6 +122,13 @@ export function AuthProvider({ children }: Props) {
     }
     const updateTitlePage = (tittle:string)=>{
         settitlePages(tittle)
+    }
+    const updateRent = (profit:number, rentability:number)=>{
+        setRent(rentability)
+        setProfit(profit)
+    }
+    const updateServiceList = (service:Service[]) => {
+        setserviceList(service)
     }
     const value = {
         uid,
@@ -82,8 +140,16 @@ export function AuthProvider({ children }: Props) {
         auth,
         db,
         titlePages,
+        profit,
+        rentability,
+        serviceList,
+        currentDayFilter,
         userSession,
-        updateTitlePage
+        updateTitlePage,
+        updateRent,
+        updateServiceList,
+        updateCurrentList,
+        updateCurrentDayFilter
     }
     return (
         <>

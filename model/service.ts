@@ -1,4 +1,5 @@
-import { serverTimestamp  } from "firebase/firestore";
+import { orderBy, serverTimestamp, where  } from "firebase/firestore";
+import moment from "moment";
 import BaseAdapter from "./baseAdapter";
 
 interface IService{
@@ -52,7 +53,6 @@ export default class Service extends BaseAdapter implements IService{
     }
 
     updateService(id:string):Promise<{message}>{
-        console.log(this.serviceDate)
         return this.update(
             new Service(id,this.uid,this.name,this.service,this.price,this.serviceDate),
             id,
@@ -62,6 +62,22 @@ export default class Service extends BaseAdapter implements IService{
 
     deleteService():Promise<{message}>{
         return this.delete(this.id, Service.COLLECTION_NAME)
+    }
+
+    async getDocumentByDate(dateFilterInitial:string, dateFilterFinal:string, uid:string){
+        let services = []
+        let query = await this.getDocuments(Service.COLLECTION_NAME, [where("serviceDate", ">=", moment(dateFilterInitial).toDate()), where("serviceDate", "<=", moment(dateFilterFinal).toDate()),where("uid", "==", uid), orderBy("serviceDate","desc")])
+        query.forEach((doc) => {
+            const docService = doc.data()
+            services.push({
+                id: docService.id,
+                service: docService.service,
+                client: docService.name,
+                price: docService.price,
+                date: moment.unix(docService.serviceDate.seconds).toDate()
+            });
+        });
+        return services
     }
 
 

@@ -137,6 +137,8 @@ export default function UserAccount(){
     return (
         <div>
             <HeaderMenu>
+                <p></p>
+                <br/>
             <Container>
                 <Button circular onClick={handleEdit} color='pink'>{editButtonState}</Button>
                 <Messages {...formMessage}/>
