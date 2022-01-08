@@ -1,4 +1,4 @@
-import {Table, Container, Button, Dimmer, Loader, Segment, Dropdown, Input} from 'semantic-ui-react'
+import {Table, Container, Button, Dimmer, Loader, Segment, Dropdown, Input, Grid, Item, Icon} from 'semantic-ui-react'
 import Header from './../components/header'
 import Moment from 'moment'
 import { useEffect, useState } from 'react'
@@ -184,6 +184,18 @@ export default function ServiceList(){
                      <Loader inverted/>
                 </Dimmer>   
                 <h2>Serviços realizados</h2>
+                <p/>
+                <Item.Group>
+                <Item>
+                <Item.Content>
+                    <Item.Meta>Comissão atual</Item.Meta>
+                    <Item.Header>{priceFormat(profit, currentCurrency)}</Item.Header>
+                    <Item.Description>
+                    </Item.Description>
+                    <Item.Extra>Faturamento atual: <b>{priceFormat(rentability, currentCurrency)}</b></Item.Extra>
+                </Item.Content>
+                </Item>
+                </Item.Group>
                 <Button loading={isFilterLoad7} onClick={() =>filter(7)}  basic={isFilter7} color='pink'>7 dias</Button>
                 <Button loading={isFilterLoad15} onClick={() =>filter(15)} basic={isFilter15}  color='pink'>15 dias</Button>
                 <Button loading={isFilterLoad30} onClick={() =>filter(30)} basic={isFilter30}  color='pink'>30 dias</Button><p></p>
@@ -209,39 +221,27 @@ export default function ServiceList(){
                         
                     </Dropdown.Menu>
                 </Dropdown>
-                <Table size='small' color='pink' stackable selectable> 
-                    <Table.Header>
-                        <Table.HeaderCell>Serviço</Table.HeaderCell>
-                        <Table.HeaderCell>Cliente</Table.HeaderCell>
-                        <Table.HeaderCell>Valor</Table.HeaderCell>
-                        <Table.HeaderCell>Data do Serviço</Table.HeaderCell>
-                        <Table.HeaderCell>Ações</Table.HeaderCell>
-                    </Table.Header>
-                    <Table.Body>
-
-                        {currentList.map(({ id,service, client, price, date },x) => (
-                        <Table.Row key={x} textAlign='center'>
-                            <Table.Cell>{service}</Table.Cell>
-                            <Table.Cell>{client}</Table.Cell>
-                            <Table.Cell>{priceFormat(price,currentCurrency)}</Table.Cell>
-                            <Table.Cell>{moment(date).format(dateFormat)}</Table.Cell>
-                            <Table.Cell><CustomModalUpdate {...{ id,client, service, price, date }} updateService={updateService}/> <CustomModalDelete id={id} deleteService={deleteService}/></Table.Cell>
-                        </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table>
-                <Table>
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>Faturamento neste periodo</Table.Cell>
-                            <Table.Cell warning>{priceFormat(rentability, currentCurrency)}</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Comissão neste periodo</Table.Cell>
-                            <Table.Cell positive><b>{priceFormat(profit, currentCurrency)}</b></Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-                </Table>
+                {currentList.map(({ id,service, client, price, date },x) => (
+                <Segment vertical key={x}>
+                    <Grid padded>
+                    <Grid.Row columns={3}>
+                        <Icon color='pink' circular inverted size='large' name='dollar sign'/>
+                        <Grid.Column width={7}>
+                            <span><b>{priceFormat(price,currentCurrency)}</b></span><br/>
+                            <span style={{"color": "rgba(0,0,0,.4)"}}><b>{service}</b></span><br/>
+                            <span style={{"color": "rgba(0,0,0,.4)"}}>{client}</span>
+                        </Grid.Column>
+                        <Grid.Column textAlign='right' width={'6'}>
+                            <p><b>{moment(date).format(dateFormat)}</b></p>
+                            <Grid.Row>
+                                <CustomModalUpdate {...{ id,client, service, price, date }} updateService={updateService}/>
+                                <CustomModalDelete id={id} deleteService={deleteService}/>  
+                            </Grid.Row>
+                        </Grid.Column>
+                    </Grid.Row> 
+                    </Grid>
+                </Segment>
+                ))}
                 </Segment>
               
             </Container>

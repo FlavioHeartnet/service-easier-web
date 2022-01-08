@@ -34,7 +34,7 @@ function CustomModalDelete(props) {
             dispatch({ event: e.type, name: 'onClose', type: 'CLOSE_MODAL' })
           }
           open={open}
-          trigger={<Button icon color='red'><Icon name='delete'/></Button>}
+          trigger={<Button size='mini' icon color='red'><Icon name='delete'/></Button>}
         >
           <Modal.Header>Deletar este serviço?</Modal.Header>
           <Modal.Content>
