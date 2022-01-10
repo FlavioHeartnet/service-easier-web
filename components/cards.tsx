@@ -1,13 +1,31 @@
-import { Card, Grid, Icon, IconGroup } from "semantic-ui-react";
-import  './../styles/Home.module.scss'
+import { useRouter } from "next/router";
+import {Grid, Icon } from "semantic-ui-react";
+import styles from './../styles/Home.module.scss'
 export default function Cards(){
+    const router = useRouter()
     return(
         <div>
-            <Grid>
-                <Grid.Row>
-                    <Icon color='pink' circular inverted size='big' name='add'/>
-                    <Icon color='pink' circular inverted size='big' name='search'/>
-                    <Icon color='pink' circular inverted size='big' name='user'/>
+            <Grid divided>
+                <Grid.Row centered columns={3}>
+                    <Grid.Column textAlign="center">
+                        <div className={styles.homebutton} onClick={()=> router.push('/addservice')}>
+                        <Icon color='grey' circular  size='big' name='add'/>
+                        <p>Adicionar Serviço</p>
+                        </div>
+                    </Grid.Column>
+                    
+                    <Grid.Column textAlign="center">
+                        <div className={styles.homebutton} onClick={()=> router.push('/serviceList')}>
+                        <Icon color='grey' circular  size='big' name='search'/>
+                        <p>Consultar Serviços</p>
+                        </div>
+                    </Grid.Column>
+                    <Grid.Column textAlign="center">
+                        <div className={styles.homebutton} onClick={()=> router.push('/useraccount')}>
+                        <Icon color='grey' circular  size='big' name='user'/>
+                        </div>
+                        <p>Gerenciar Conta</p>
+                    </Grid.Column>
                 </Grid.Row>
             </Grid>
         </div>
