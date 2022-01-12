@@ -16,7 +16,6 @@ export default function Login() {
   const [isLoading, setLoading] = useState(false)
   const [email, setEmail] =  useState("")
   const [password, setPassword] = useState("")
-  const [isFormSucess, setFormSucess] = useState({})
   const [formMessage, setFormMessage] = useState({
       success: true,
       error:false,
@@ -33,9 +32,6 @@ export default function Login() {
     }).catch((error) => {
       // Handle Errors here.
       const errorMessage = localizeErrorMap(error);
-      setFormSucess({
-        error: true
-    })
     setFormMessage({
         error: true,
         success:false,
@@ -55,9 +51,6 @@ export default function Login() {
   })
   .catch((error) => {
     const errorMessage = localizeErrorMap(error)
-    setFormSucess({
-      error: true
-  })
   setFormMessage({
       error: true,
       success:false,
@@ -123,10 +116,7 @@ export default function Login() {
           Faça seu login aqui!
         </p> 
         <Messages {...formMessage}/>
-      <Form onSubmit={login} {...isFormSucess}>
-      <Message
-                    {...formMessage}          
-                /> 
+      <Form onSubmit={login}>
       <Form.Field>
           <label>E-mail</label>
           <input placeholder={'Digite seu email'} required onChange={(e)=> setEmail(e.target.value)} type='email' />

@@ -10,7 +10,7 @@ export default function Cards(){
                     <Grid.Column textAlign="center">
                         <div className={styles.homebutton} onClick={()=> router.push('/addservice')}>
                         <Icon color='grey' circular  size='big' name='add'/>
-                        <p>Adicionar Serviço</p>
+                        <p>Lançar serviços</p>
                         </div>
                     </Grid.Column>
                     
