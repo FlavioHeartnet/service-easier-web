@@ -1,38 +1,33 @@
-import { Card } from "semantic-ui-react";
-import  './../styles/Home.module.scss'
+import { useRouter } from "next/router";
+import {Grid, Icon } from "semantic-ui-react";
+import styles from './../styles/Home.module.scss'
 export default function Cards(){
-
-    const items = [
-        {
-          header: 'Numero de Serviços feitos no mês',
-          description:
-            '25',
-          meta: 'Números de serviços prestados a clientes.',
-          color: 'pink',
-          fluid: true
-        },
-        {
-          header: 'Rentabilidade do mês',
-          description:
-            'R$ 500,00',
-          meta: 'Valores atualizados sem o desconto de comissão.',
-          color: 'pink',
-          fluid: true
-        },
-        {
-          header: 'Lucro previsto do mês',
-          description:
-            'R$ 250,00',
-          meta: 'Valores previstos a serem recebidos',
-          color: 'pink',
-          fluid: true
-        },
-      ]
-
-
+    const router = useRouter()
     return(
         <div>
-            <Card.Group doubling itemsPerRow='3' centered items={items} />
+            <Grid divided>
+                <Grid.Row centered columns={3}>
+                    <Grid.Column textAlign="center">
+                        <div className={styles.homebutton} onClick={()=> router.push('/addservice')}>
+                        <Icon color='grey' circular  size='big' name='add'/>
+                        <p>Adicionar Serviço</p>
+                        </div>
+                    </Grid.Column>
+                    
+                    <Grid.Column textAlign="center">
+                        <div className={styles.homebutton} onClick={()=> router.push('/serviceList')}>
+                        <Icon color='grey' circular  size='big' name='search'/>
+                        <p>Consultar Serviços</p>
+                        </div>
+                    </Grid.Column>
+                    <Grid.Column textAlign="center">
+                        <div className={styles.homebutton} onClick={()=> router.push('/useraccount')}>
+                        <Icon color='grey' circular  size='big' name='user'/>
+                        </div>
+                        <p>Gerenciar Conta</p>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
         </div>
     )
 }
