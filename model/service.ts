@@ -74,7 +74,7 @@ export default class Service extends BaseAdapter implements IService{
                 service: docService.service,
                 client: docService.name,
                 price: docService.price,
-                date: moment.unix(docService.serviceDate.seconds).toDate()
+                serviceDate: moment.unix(docService.serviceDate.seconds).toDate()
             });
         });
         return services
