@@ -100,7 +100,6 @@ const MobileContainer = (props)=>{
             visible={sidebarOpened}
           >
             <Menu.Item active><h2>Service Easier</h2></Menu.Item>
-            <Menu.Item onClick={()=> props.handleroute('/home')}><b>Home</b></Menu.Item>
             <Menu.Item onClick={()=> props.handleroute('/addservice')}><b>Lançar serviços</b></Menu.Item>
             <Menu.Item onClick={()=> props.handleroute('/serviceList')}><b>Consultar serviços</b></Menu.Item>
             <Menu.Item onClick={()=> props.handleroute('/useraccount')}><b>Conta</b></Menu.Item>
@@ -113,6 +112,9 @@ const MobileContainer = (props)=>{
                 <Menu.Item onClick={handleToggle}>
                     <Icon name='sidebar' />
                 </Menu.Item>
+                <Menu.Item onClick={()=> props.handleroute('/home')} position='left'><Button as='a' inverted>
+                    Home
+                  </Button></Menu.Item>
                 <Menu.Item onClick={props.logout} position='right'><Button as='a' inverted>
                     Log out
                   </Button></Menu.Item>
