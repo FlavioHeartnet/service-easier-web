@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Service from "../model/service";
 
 const options = {
     elementType: ["line", "area", "bar"],
@@ -56,6 +57,7 @@ const options = {
   export default function useChartConfig({
     series,
     datums = 10,
+    dataSet,
     useR,
     show = [],
     count = 1,
@@ -79,6 +81,7 @@ const options = {
   }: {
     series: number;
     datums?: number;
+    dataSet: Service[]
     useR?: boolean;
     show?: (keyof typeof options)[];
     count?: number;
@@ -120,20 +123,20 @@ const options = {
       tooltipGroupingMode,
       snapCursor,
       datums,
-      data: makeDataFrom(dataType, series, datums, useR),
+      data: makeDataFrom(dataType, series, datums, useR, dataSet),
     });
   
     useEffect(() => {
       setState((old) => ({
         ...old,
-        data: makeDataFrom(dataType, series, datums, useR),
+        data: makeDataFrom(dataType, series, datums, useR, dataSet),
       }));
-    }, [count, dataType, datums, series, useR]);
+    }, [count, dataType, datums, series, useR, dataSet]);
   
     const randomizeData = () =>
       setState((old) => ({
         ...old,
-        data: makeDataFrom(dataType, series, datums, useR),
+        data: makeDataFrom(dataType, series, datums, useR, dataSet),
       }));
   
     const Options = optionKeys
@@ -174,18 +177,20 @@ const options = {
     dataType: DataType,
     series: number,
     datums: number,
-    useR?: boolean
+    useR?: boolean,
+    dataSet?: Service[]
   ) {
     return [
       ...new Array(series || Math.max(Math.round(Math.random() * 5), 1)),
-    ].map((d, i) => makeSeries(i, dataType, datums, useR));
+    ].map((d, i) => makeSeries(i, dataType, datums, useR, dataSet));
   }
   
   function makeSeries(
     i: number,
     dataType: DataType,
     datums: number,
-    useR?: boolean
+    useR?: boolean,
+    dataSet?: Service[]
   ) {
     const start = 0;
     const startDate = new Date();

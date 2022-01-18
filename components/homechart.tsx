@@ -12,6 +12,8 @@ export default function HomeChart(){
     const { data } = ChartData({
         series: 1,
         dataType: "time",
+        //datums: serviceList.length,
+        dataSet: serviceList
       });
       const primaryAxis = useMemo<
       AxisOptions<typeof data[number]["data"][number]>
