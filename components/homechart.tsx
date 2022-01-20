@@ -9,10 +9,11 @@ import moment from 'moment'
 import { useAuth } from './contexts/authContext';
 export default function HomeChart(){
     const { updateCurrentList, uid,db, currentDayFilter, serviceList} = useAuth()
+    console.log(serviceList.length)
     const { data } = ChartData({
         series: 1,
         dataType: "time",
-        //datums: serviceList.length,
+        datums: serviceList.length == 0 ? 10: serviceList.length ,
         dataSet: serviceList
       });
       const primaryAxis = useMemo<
