@@ -116,9 +116,37 @@ export function AuthProvider({ children }: Props) {
         serviceList.sort((a,b) => {
             return +moment(b.date).toDate() - +moment(a.date).toDate()
         })
-        let rent = calcComission(serviceList, comission == null ? 100 : comission)
-        updateRent(rent[1], rent[0])
-        setserviceList(serviceList)
+        if(serviceList.length > 0){
+            updateChartByDateContext(serviceList)
+            let rent = calcComission(serviceList, comission == null ? 100 : comission)
+            updateRent(rent[1], rent[0])
+            setserviceList(serviceList)
+        }
+    }
+    const updateChartByDateContext = (serviceList) =>{
+        let count = 0
+        let datachartCount = []
+        serviceList.map((s,i) => {
+        count++
+        let currentDate = moment(s.serviceDate).format('DD/MM/YYYY')
+            if(serviceList[i+1] != null){
+                let nextDate = moment(serviceList[i+1].serviceDate).format('DD/MM/YYYY')
+                if(currentDate != nextDate){
+                datachartCount.push({
+                    date: currentDate,
+                    count:count
+                })
+                currentDate = nextDate
+                count = 0
+                }
+            }else{
+                datachartCount.push({
+                    date: currentDate,
+                    count:count
+                })
+            }
+        })
+        setChartbyDate(datachartCount)
     }
     const updateCurrentDayFilter = (day:number)=>{
         setcurrentDayFilter(day)

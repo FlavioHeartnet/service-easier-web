@@ -231,16 +231,9 @@ const options = {
   
         const distribution = 1.1;
   
-        const y =
-          dataSet[i].count
+        const y = dataSet[i].count
   
-        const r = !useR
-          ? undefined
-          : rMax -
-            Math.floor(
-              Math.log(Math.random() * (distribution ** rMax - rMin) + rMin) /
-                Math.log(distribution)
-            );
+        const r = 0
   
         return {
           primary: x,
