@@ -7,7 +7,7 @@ import { useAuth } from "./contexts/authContext";
 
 export default function FilterButtons(props){
 
-    const {uid, updateRent, comission, updateServiceList, updateCurrentList, currentDayFilter} = useAuth()
+    const {uid, updateRent, comission, updateServiceList, updateCurrentList, currentDayFilter, setChartbyDate} = useAuth()
     const [isFilter7, setFilter7] = useState(true)
     const [isFilter15, setFilter15] = useState(true)
     const [isFilter30, setFilter30] = useState(true)
@@ -22,6 +22,29 @@ export default function FilterButtons(props){
         setFilter15(true)
         setFilter30(true)
         updateCurrentList(days,props.firebaseServiceList)
+        let count = 0
+        let datachartCount = []
+        props.firebaseServiceList.map((s,i) => {
+        count++
+        let currentDate = moment(s.serviceDate).format('DD/MM/YYYY')
+        if(props.firebaseServiceList[i+1] != null){
+            let nextDate = moment(props.firebaseServiceList[i+1].serviceDate).format('DD/MM/YYYY')
+            if(currentDate != nextDate){
+            datachartCount.push({
+                date: currentDate,
+                count:count
+            })
+            currentDate = nextDate
+            count = 0
+            }
+        }else{
+        datachartCount.push({
+            date: currentDate,
+            count:count
+        })
+        }
+        })
+        setChartbyDate(datachartCount)
         if(days === 7){
             setFilter7(false)
             setFilterLoad7(true)

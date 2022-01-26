@@ -7,14 +7,15 @@ import Service from '../model/service'
 import { collection, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore'
 import moment from 'moment'
 import { useAuth } from './contexts/authContext';
+
 export default function HomeChart(){
-    const { updateCurrentList, uid,db, currentDayFilter, serviceList} = useAuth()
-    console.log(serviceList.length)
+    const { updateCurrentList, uid,db, currentDayFilter, serviceList, chartdatabyDate} = useAuth()
+    console.log(chartdatabyDate)
     const { data } = ChartData({
         series: 1,
         dataType: "time",
-        datums: serviceList.length == 0 ? 10: serviceList.length ,
-        dataSet: serviceList
+        datums: chartdatabyDate.length == 0 ? 10: serviceList.length ,
+        dataSet: chartdatabyDate
       });
       const primaryAxis = useMemo<
       AxisOptions<typeof data[number]["data"][number]>
@@ -32,8 +33,6 @@ export default function HomeChart(){
         {
           getValue: (datum) => datum.secondary,
           stacked: true,
-          // OR
-          // elementType: "area",
         },
       ],
       []
@@ -55,9 +54,7 @@ export default function HomeChart(){
                                 docService.service,
                                 docService.price,
                                 moment.unix(docService.serviceDate.seconds).toDate()
-                            ));
-                            
-                            
+                            ));                          
                         }
                         if (change.type === "modified") {
                             
@@ -82,13 +79,12 @@ export default function HomeChart(){
                         setFirebaseServiceList(services)
                         updateCurrentList(currentDayFilter,services)
                 });
-                
                 }
             
         }catch(e){
             console.log(e)
         }
-    },[currentDayFilter, uid])
+    },[currentDayFilter, db, uid])
   
     return (
         <div style={{height: '300px'}}>

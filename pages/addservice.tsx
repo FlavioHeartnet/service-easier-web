@@ -51,7 +51,6 @@ export default function AddService(){
     async function insertService(){
         const priceFormated = price.replace('R$ ', '').replace(',','.')
         setPrice(priceFormated)
-        console.log(parseFloat(priceFormated))
         setLoading(true)
         try{
         if(validadeDate(serviceDate)){

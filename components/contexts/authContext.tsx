@@ -6,7 +6,10 @@ import config from "../../config";
 import moment from "moment";
 import { calcComission } from "../../Utils/validations";
 import Service from "../../model/service";
-
+export type chartDateType = {
+    date:string,
+    count:number
+}
 export type authContextType = {
     uid: string
     email: string
@@ -26,8 +29,12 @@ export type authContextType = {
     updateServiceList: (service: Service[])=>void
     updateCurrentList: (day:number, firebaseList: Service[]) => void,
     currentDayFilter: number,
-    updateCurrentDayFilter: (day:number)=>void
+    updateCurrentDayFilter: (day:number)=>void,
+    chartdatabyDate : chartDateType[],
+    setChartbyDate : (chartdatabyDate) =>void
+
 };
+
 
 const firebaseConfig = {
     apiKey: config.apiKey,
@@ -58,7 +65,9 @@ const authContextDefaultValues: authContextType = {
     updateServiceList: () => { },
     updateCurrentList: () => { },
     currentDayFilter: 0,
-    updateCurrentDayFilter: () => { }
+    updateCurrentDayFilter: () => { },
+    chartdatabyDate: [{date:'', count:0}],
+    setChartbyDate: () => { },
 };
 
 const AuthContext = createContext<authContextType>(authContextDefaultValues);
@@ -85,6 +94,7 @@ export function AuthProvider({ children }: Props) {
     const [profit, setProfit] = useState(0)
     const [serviceList, setserviceList] = useState([new Service('','','','',0,new Date())])
     const [currentDayFilter, setcurrentDayFilter] = useState(7)
+    const [chartdatabyDate, setchartdatabyDate] = useState([{date:'', count:0}])
 
     const updateCurrentList = (day:number, firebaseList)=> {
         setcurrentDayFilter(day) 
@@ -130,6 +140,9 @@ export function AuthProvider({ children }: Props) {
     const updateServiceList = (service:Service[]) => {
         setserviceList(service)
     }
+    const setChartbyDate = (chartData)=>{
+        setchartdatabyDate(chartData)
+    }
     const value = {
         uid,
         email,
@@ -144,12 +157,14 @@ export function AuthProvider({ children }: Props) {
         rentability,
         serviceList,
         currentDayFilter,
+        chartdatabyDate,
         userSession,
         updateTitlePage,
         updateRent,
         updateServiceList,
         updateCurrentList,
-        updateCurrentDayFilter
+        updateCurrentDayFilter,
+        setChartbyDate
     }
     return (
         <>

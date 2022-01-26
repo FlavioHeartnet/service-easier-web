@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { chartDateType } from "../components/contexts/authContext";
 import Service from "../model/service";
 
 const options = {
@@ -81,7 +82,7 @@ const options = {
   }: {
     series: number;
     datums?: number;
-    dataSet: Service[]
+    dataSet: chartDateType[]
     useR?: boolean;
     show?: (keyof typeof options)[];
     count?: number;
@@ -178,7 +179,7 @@ const options = {
     series: number,
     datums: number,
     useR?: boolean,
-    dataSet?: Service[]
+    dataSet?: chartDateType[]
   ) {
     return [
       ...new Array(series || Math.max(Math.round(Math.random() * 5), 1)),
@@ -190,7 +191,7 @@ const options = {
     dataType: DataType,
     datums: number,
     useR?: boolean,
-    dataSet?: Service[]
+    dataSet?: chartDateType[]
   ) {
     const start = 0;
     const startDate = new Date();
@@ -213,7 +214,12 @@ const options = {
         if (dataType === "ordinal") {
           x = `Ordinal Group ${start + i}`;
         } else if (dataType === "time") {
-          x = new Date(startDate.getTime() + 60 * 1000 * 60 * 24 * i);
+          if(dataSet[i] == null){
+            x = new Date(startDate.getTime() + 60 * 1000 * 60 * 24 * i);
+          }else{
+            x= dataSet[i].date
+          }
+          
         } else if (dataType === "linear") {
           x =
             Math.random() < nullChance
@@ -226,9 +232,7 @@ const options = {
         const distribution = 1.1;
   
         const y =
-          Math.random() < nullChance
-            ? null
-            : min + Math.round(Math.random() * (max - min));
+          dataSet[i].count
   
         const r = !useR
           ? undefined
