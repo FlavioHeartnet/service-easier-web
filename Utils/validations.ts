@@ -53,3 +53,14 @@ export function priceFormat(price:number, currency:string):string{
 		case 'br': return 'R$ '+ price.toString().replace('.',',')
 	}
 }
+
+export function groupBy(key) {
+	return function group(array) {
+	  return array.reduce((acc, obj) => {
+		let property = obj[key];
+		acc[property] = acc[property] || [];
+		acc[property].push(obj);
+		return acc;
+	  }, {});
+	};
+  }

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { chartDateType } from "../components/contexts/authContext";
+import Service from "../model/service";
 
 const options = {
     elementType: ["line", "area", "bar"],
@@ -56,6 +58,7 @@ const options = {
   export default function useChartConfig({
     series,
     datums = 10,
+    dataSet,
     useR,
     show = [],
     count = 1,
@@ -79,6 +82,7 @@ const options = {
   }: {
     series: number;
     datums?: number;
+    dataSet: chartDateType[]
     useR?: boolean;
     show?: (keyof typeof options)[];
     count?: number;
@@ -120,20 +124,20 @@ const options = {
       tooltipGroupingMode,
       snapCursor,
       datums,
-      data: makeDataFrom(dataType, series, datums, useR),
+      data: makeDataFrom(dataType, series, datums, useR, dataSet),
     });
   
     useEffect(() => {
       setState((old) => ({
         ...old,
-        data: makeDataFrom(dataType, series, datums, useR),
+        data: makeDataFrom(dataType, series, datums, useR, dataSet),
       }));
-    }, [count, dataType, datums, series, useR]);
+    }, [count, dataType, datums, series, useR, dataSet]);
   
     const randomizeData = () =>
       setState((old) => ({
         ...old,
-        data: makeDataFrom(dataType, series, datums, useR),
+        data: makeDataFrom(dataType, series, datums, useR, dataSet),
       }));
   
     const Options = optionKeys
@@ -174,18 +178,20 @@ const options = {
     dataType: DataType,
     series: number,
     datums: number,
-    useR?: boolean
+    useR?: boolean,
+    dataSet?: chartDateType[]
   ) {
     return [
       ...new Array(series || Math.max(Math.round(Math.random() * 5), 1)),
-    ].map((d, i) => makeSeries(i, dataType, datums, useR));
+    ].map((d, i) => makeSeries(i, dataType, datums, useR, dataSet));
   }
   
   function makeSeries(
     i: number,
     dataType: DataType,
     datums: number,
-    useR?: boolean
+    useR?: boolean,
+    dataSet?: chartDateType[]
   ) {
     const start = 0;
     const startDate = new Date();
@@ -208,7 +214,12 @@ const options = {
         if (dataType === "ordinal") {
           x = `Ordinal Group ${start + i}`;
         } else if (dataType === "time") {
-          x = new Date(startDate.getTime() + 60 * 1000 * 60 * 24 * i);
+          if(dataSet[i] == null){
+            x = new Date(startDate.getTime() + 60 * 1000 * 60 * 24 * i);
+          }else{
+            x= dataSet[i].date
+          }
+          
         } else if (dataType === "linear") {
           x =
             Math.random() < nullChance
@@ -220,18 +231,9 @@ const options = {
   
         const distribution = 1.1;
   
-        const y =
-          Math.random() < nullChance
-            ? null
-            : min + Math.round(Math.random() * (max - min));
+        const y = dataSet[i].count
   
-        const r = !useR
-          ? undefined
-          : rMax -
-            Math.floor(
-              Math.log(Math.random() * (distribution ** rMax - rMin) + rMin) /
-                Math.log(distribution)
-            );
+        const r = 0
   
         return {
           primary: x,

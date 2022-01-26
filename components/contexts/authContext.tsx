@@ -6,7 +6,10 @@ import config from "../../config";
 import moment from "moment";
 import { calcComission } from "../../Utils/validations";
 import Service from "../../model/service";
-
+export type chartDateType = {
+    date:string,
+    count:number
+}
 export type authContextType = {
     uid: string
     email: string
@@ -26,8 +29,12 @@ export type authContextType = {
     updateServiceList: (service: Service[])=>void
     updateCurrentList: (day:number, firebaseList: Service[]) => void,
     currentDayFilter: number,
-    updateCurrentDayFilter: (day:number)=>void
+    updateCurrentDayFilter: (day:number)=>void,
+    chartdatabyDate : chartDateType[],
+    setChartbyDate : (chartdatabyDate) =>void
+
 };
+
 
 const firebaseConfig = {
     apiKey: config.apiKey,
@@ -58,7 +65,9 @@ const authContextDefaultValues: authContextType = {
     updateServiceList: () => { },
     updateCurrentList: () => { },
     currentDayFilter: 0,
-    updateCurrentDayFilter: () => { }
+    updateCurrentDayFilter: () => { },
+    chartdatabyDate: [{date:'', count:0}],
+    setChartbyDate: () => { },
 };
 
 const AuthContext = createContext<authContextType>(authContextDefaultValues);
@@ -85,6 +94,7 @@ export function AuthProvider({ children }: Props) {
     const [profit, setProfit] = useState(0)
     const [serviceList, setserviceList] = useState([new Service('','','','',0,new Date())])
     const [currentDayFilter, setcurrentDayFilter] = useState(7)
+    const [chartdatabyDate, setchartdatabyDate] = useState([{date:'', count:0}])
 
     const updateCurrentList = (day:number, firebaseList)=> {
         setcurrentDayFilter(day) 
@@ -106,9 +116,37 @@ export function AuthProvider({ children }: Props) {
         serviceList.sort((a,b) => {
             return +moment(b.date).toDate() - +moment(a.date).toDate()
         })
-        let rent = calcComission(serviceList, comission == null ? 100 : comission)
-        updateRent(rent[1], rent[0])
-        setserviceList(serviceList)
+        if(serviceList.length > 0){
+            updateChartByDateContext(serviceList)
+            let rent = calcComission(serviceList, comission == null ? 100 : comission)
+            updateRent(rent[1], rent[0])
+            setserviceList(serviceList)
+        }
+    }
+    const updateChartByDateContext = (serviceList) =>{
+        let count = 0
+        let datachartCount = []
+        serviceList.map((s,i) => {
+        count++
+        let currentDate = moment(s.serviceDate).format('DD/MM/YYYY')
+            if(serviceList[i+1] != null){
+                let nextDate = moment(serviceList[i+1].serviceDate).format('DD/MM/YYYY')
+                if(currentDate != nextDate){
+                datachartCount.push({
+                    date: currentDate,
+                    count:count
+                })
+                currentDate = nextDate
+                count = 0
+                }
+            }else{
+                datachartCount.push({
+                    date: currentDate,
+                    count:count
+                })
+            }
+        })
+        setChartbyDate(datachartCount)
     }
     const updateCurrentDayFilter = (day:number)=>{
         setcurrentDayFilter(day)
@@ -130,6 +168,9 @@ export function AuthProvider({ children }: Props) {
     const updateServiceList = (service:Service[]) => {
         setserviceList(service)
     }
+    const setChartbyDate = (chartData)=>{
+        setchartdatabyDate(chartData)
+    }
     const value = {
         uid,
         email,
@@ -144,12 +185,14 @@ export function AuthProvider({ children }: Props) {
         rentability,
         serviceList,
         currentDayFilter,
+        chartdatabyDate,
         userSession,
         updateTitlePage,
         updateRent,
         updateServiceList,
         updateCurrentList,
-        updateCurrentDayFilter
+        updateCurrentDayFilter,
+        setChartbyDate
     }
     return (
         <>

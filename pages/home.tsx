@@ -4,21 +4,19 @@ import Cards from './../components/cards'
 import HomeChart from './../components/homechart'
 import { useAuth } from '../components/contexts/authContext'
 export default function Home(){
-    const { name ,updateTitlePage,updateCurrentList, uid,db, currentDayFilter} = useAuth()
+    const { name ,updateTitlePage} = useAuth()
     updateTitlePage("Olá, " + name + " ;)")
     
     return (
         <>
         <HeaderMenu>    
-            <Container>
+            <Container style={{'height': '650px'}}>
             <br/><br/>
             <Cards/>
             <br/>
             <HomeChart/>
             </Container>
-            <br/><br/><br/><br/><br/><br/><br/><br/><br/>
         </HeaderMenu>
-        
         </>
     )
 }

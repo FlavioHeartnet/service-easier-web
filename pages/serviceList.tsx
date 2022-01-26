@@ -28,7 +28,7 @@ export default function ServiceList(){
         try{
             if(uid!= undefined && uid!= null){
                 const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid),orderBy("serviceDate", "desc"),limit(250));
-                const unsub = onSnapshot(q, (querySnapshot) => {
+                return onSnapshot(q, (querySnapshot) => {
                     querySnapshot.docChanges().forEach((change) => {
                         setLoadingData(false) 
                         if (change.type === "added") {
@@ -119,6 +119,7 @@ export default function ServiceList(){
                     </Grid>
                 </Segment>
                 ))}
+                <br/><br/><br/><br/><br/>
                 </Segment>
               
             </Container>

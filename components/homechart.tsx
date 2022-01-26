@@ -7,40 +7,44 @@ import Service from '../model/service'
 import { collection, limit, onSnapshot, orderBy, query, where } from 'firebase/firestore'
 import moment from 'moment'
 import { useAuth } from './contexts/authContext';
+import { Segment } from 'semantic-ui-react';
+
 export default function HomeChart(){
-    const { updateCurrentList, uid,db, currentDayFilter, serviceList} = useAuth()
+    const { updateCurrentList, uid,db, currentDayFilter, chartdatabyDate} = useAuth()
+    const [isLoading, setLoading] = useState(false)
     const { data } = ChartData({
-        series: 1,
-        dataType: "time",
-      });
-      const primaryAxis = useMemo<
-      AxisOptions<typeof data[number]["data"][number]>
-    >(
-      () => ({
-        getValue: (datum) => datum.primary as Date,
-      }),
-      []
-    );
-  
-    const secondaryAxes = useMemo<
-      AxisOptions<typeof data[number]["data"][number]>[]
-    >(
-      () => [
-        {
-          getValue: (datum) => datum.secondary,
-          stacked: true,
-          // OR
-          // elementType: "area",
-        },
-      ],
-      []
-    );
+      series: 1,
+      dataType: "time",
+      datums: chartdatabyDate.length == 0 ? 0: chartdatabyDate.length ,
+      dataSet: chartdatabyDate
+    });
+    const primaryAxis = useMemo<
+    AxisOptions<typeof data[number]["data"][number]>
+  >(
+    () => ({
+      getValue: (datum) => datum.primary as Date,
+    }),
+    []
+  );
+
+  const secondaryAxes = useMemo<
+    AxisOptions<typeof data[number]["data"][number]>[]
+  >(
+    () => [
+      {
+        getValue: (datum) => datum.secondary,
+        stacked: true,
+      },
+    ],
+    []
+  );
 
     const [firebaseServiceList, setFirebaseServiceList] = useState([new Service()])
     useEffect(() => {
         let services: Service[] = []
         try{
             if(uid!= undefined && uid!= null){
+              setLoading(true)
                 const q = query(collection(db, Service.COLLECTION_NAME), where("uid", "==", uid),orderBy("serviceDate", "desc"),limit(250));
                 const unsub = onSnapshot(q, (querySnapshot) => {
                     querySnapshot.docChanges().forEach((change) => {
@@ -52,9 +56,7 @@ export default function HomeChart(){
                                 docService.service,
                                 docService.price,
                                 moment.unix(docService.serviceDate.seconds).toDate()
-                            ));
-                            
-                            
+                            ));                          
                         }
                         if (change.type === "modified") {
                             
@@ -76,22 +78,22 @@ export default function HomeChart(){
                             services.splice(services.indexOf(serviceItemToRemove[0]),1)
                         }
                         });
+                        setLoading(false)
                         setFirebaseServiceList(services)
                         updateCurrentList(currentDayFilter,services)
                 });
-                
                 }
             
         }catch(e){
             console.log(e)
         }
-    },[currentDayFilter, uid])
+    },[currentDayFilter, db, uid])
   
     return (
-        <div style={{height: '300px'}}>
+        <Segment loading={isLoading} basic style={{'height': '300px', 'padding': '0'}}>
             <h2>Clientes atendidos</h2>
             <FilterButtons firebaseServiceList={firebaseServiceList}/>
             <Chart options={{data, primaryAxis,secondaryAxes, defaultColors:['#ea158d'] }}/>
-        </div>
+        </Segment>
     )
 }
