@@ -24,6 +24,7 @@ export default class User extends BaseAdapter implements IUser  {
     payday: number;
     timestamp:Date
     static COLLECTION_NAME:string = 'user'
+    static CPF_ERROR_MESSAGE:string = 'CPF já cadastrado, por favor insira outro para finalizar o cadastro! ;)'
     constructor(uid?,cpf?,phone?, comission?, payday?, timestamp?){
         super();
         this.uid = uid
@@ -54,9 +55,15 @@ export default class User extends BaseAdapter implements IUser  {
         };
     }
 
-
+async checkData(){
+  const snapshot = await this.getDocuments(User.COLLECTION_NAME, [where("cpf", "==", this.cpf)])
+  console.log(snapshot.empty)
+  return snapshot.empty
+}
 async insertUser():Promise<{message}>{
-        const newUser = {
+        
+        if(this.checkData()){
+          const newUser = {
             uid: this.uid,
             cpf: this.cpf,
             phone: this.phone,
@@ -64,15 +71,23 @@ async insertUser():Promise<{message}>{
             payday: 15,
             timestamp: serverTimestamp()
           }
-       return this.insert(newUser,User.COLLECTION_NAME)
+          return this.insert(newUser,User.COLLECTION_NAME)
+        }else{
+          return {message: User.CPF_ERROR_MESSAGE}
+        }
+        
     }
 
    async updateUser(id:string):Promise<{message}> {
+    if(this.checkData()){
     return this.update(
         new User(this.uid,this.cpf,this.phone, this.comission, this.payday, serverTimestamp()),
         id,
         User.COLLECTION_NAME,
         this.converter()) 
+    }else{
+      return {message: User.CPF_ERROR_MESSAGE}
+    }
    }
 
    async updateEmailInFirebase(auth, email){
