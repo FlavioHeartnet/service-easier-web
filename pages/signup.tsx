@@ -38,8 +38,6 @@ export default function Signup(){
             createUserWithEmailAndPassword(auth, email, senha)
                 .then(async (userCredential) => {
                     const user = userCredential.user;
-                    console.log(user)
-
                     const token = user.uid
                     const newUser = new User(token,cpf,tel,0,0,null)
                     newUser.updateEmailInFirebase(auth,email)

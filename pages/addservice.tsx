@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import {Form, Button, Message, Container} from 'semantic-ui-react'
+import {Form, Button, Message, Container, Checkbox} from 'semantic-ui-react'
 import Header from './../components/header'
 import InputMask from 'react-input-mask'
 import maskPriceBr from './../Utils/masks'
 import Service from './../model/service'
-import moment from 'moment'
+import moment, { now } from 'moment'
 import { useAuth } from '../components/contexts/authContext'
 
 export default function AddService(){
@@ -15,6 +15,7 @@ export default function AddService(){
     const [name, setName] = useState("")
     const [price, setPrice] = useState('R$ 0,00')
     const [serviceDate, setDate] = useState("")
+    const [recived, setRecived] = useState(false)
     const [isFormSucess, setFormSucess] = useState({})
     const [mask, setMask] = useState({})
     const [formMessage, setFormMessage] = useState({
@@ -53,8 +54,10 @@ export default function AddService(){
         setPrice(priceFormated)
         setLoading(true)
         try{
+        const recivedDate = recived ? moment().toDate() : null   
         if(validadeDate(serviceDate)){
             const serviceObject = new Service("",uid, name, service, parseFloat(priceFormated),moment(serviceDate).toDate())
+            serviceObject.recived = recivedDate
             await serviceObject.insertService()
             clearInputs()
             setLoading(false)
@@ -104,7 +107,7 @@ export default function AddService(){
     return (
         <div>
             <Header >
-            <br/>
+            <br/><br/>
             <Container>
                 <Form {...isFormSucess} loading={isLoading} onSubmit={insertService}> 
                     <Message {...formMessage}/>
@@ -123,6 +126,10 @@ export default function AddService(){
                     <Form.Field>
                         <label>Data do serviço</label>
                         <input onClick={resetStateForm} placeholder='Digite quando o serviço foi realizado' type={'date'}  onChange={e=> setDate(e.target.value)} value={serviceDate} required></input>
+                    </Form.Field> 
+                    <Form.Field>
+                        <label>Valor já recebido?</label>
+                        <Checkbox onClick={resetStateForm} slider  checked={recived} onChange={e=> setRecived(e.currentTarget.checked)}/>
                     </Form.Field> 
                     <Button fluid color='pink'>Inserir</Button>
                 </Form>

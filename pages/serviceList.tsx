@@ -33,13 +33,15 @@ export default function ServiceList(){
                         setLoadingData(false) 
                         if (change.type === "added") {
                             const docService = change.doc.data()
-                            services.push(new Service(
+                            const objServ = new Service(
                                 change.doc.id, uid.toString(),
                                 docService.name,
                                 docService.service,
                                 docService.price,
-                                moment.unix(docService.serviceDate.seconds).toDate()
-                            ));
+                                moment.unix(docService.serviceDate.seconds).toDate(),
+                            )
+                            objServ.recived = docService.recived
+                            services.push(objServ);
                             
                             
                         }
@@ -53,6 +55,7 @@ export default function ServiceList(){
                                  docService.price,
                                  moment.unix(docService.serviceDate.seconds).toDate()
                              );
+                             modifyService.recived = docService.recived
                              let serviceItemToModify = services.filter((a)=> a.id === modifyService.id)
                              services[services.indexOf(serviceItemToModify[0])] = modifyService
                         
@@ -81,8 +84,10 @@ export default function ServiceList(){
             updateCurrentList(currentDayFilter,firebaseServiceList)
         }
     }
-    async function updateService(id, name,service,price,date){
-        const resp = await new Service(id,uid, name,service,price,date).updateService(id)
+    async function updateService(id:string, name:string,service:string,price:number,date:Date, recived:Date){
+        const request = new Service(id,uid, name,service,price,date)
+        request.recived = recived
+        const resp = await request.updateService(id)
         if(resp.message == 'success'){ 
             updateCurrentList(currentDayFilter,firebaseServiceList)
         }
@@ -98,7 +103,7 @@ export default function ServiceList(){
                 <p/>
                 <BillingResume profit={profit} currentCurrency={currentCurrency} rentability={rentability}/>
                 <FilterButtons firebaseServiceList={firebaseServiceList} />
-                {serviceList.map(({ id,service, name, price, serviceDate },x) => (
+                {serviceList.map(({ id,service, name, price, serviceDate, recived },x) => (
                 <Segment vertical key={x}>
                     <Grid padded>
                     <Grid.Row columns={3}>
@@ -111,7 +116,7 @@ export default function ServiceList(){
                         <Grid.Column textAlign='right' width={'6'}>
                             <p><b>{moment(serviceDate).format(dateFormat)}</b></p>
                             <Grid.Row>
-                                <CustomModalUpdate {...{ id,name, service, price, serviceDate }} updateService={updateService}/>
+                                <CustomModalUpdate {...{ id,name, service, price, serviceDate, recived }} updateService={updateService}/>
                                 <CustomModalDelete id={id} deleteService={deleteService}/>  
                             </Grid.Row>
                         </Grid.Column>

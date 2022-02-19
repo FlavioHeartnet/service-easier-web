@@ -1,9 +1,8 @@
 import { useEffect, useReducer, useState } from 'react'
-import { Button, Container, Form, Icon, Modal } from 'semantic-ui-react'
+import { Button, Checkbox, Container, Form, Icon, Modal } from 'semantic-ui-react'
 import InputMask from 'react-input-mask'
 import maskPriceBr from '../Utils/masks'
 import moment from 'moment'
-import { updateCurrentUser } from 'firebase/auth'
 function reducer(state, action) {
   switch (action.type) {
     case 'CLEAR_LOG':
@@ -31,13 +30,15 @@ function CustomModalUpdate(props) {
     const [price, setPrice] = useState('R$ 0,00')
     const [serviceDate, setDate] = useState("")
     const [mask, setMask] = useState({})
+    const [recived, setRecived] = useState(false)
     useEffect(() => {
         setName(props.name)
         setPrice(props.price)
         setMask({value: 'R$ '+ props.price}) //value that will really apear on price field
         setService(props.service)
         setDate(moment(props.serviceDate).format('YYYY-MM-DD'))
-    }, [props.name, props.price, props.service, props.serviceDate])
+        setRecived(props.recived == null? false: true)
+    }, [props.name, props.price, props.recived, props.service, props.serviceDate])
     
     function setValuePrice(e){ 
         let  value:string  = e.target.value.toString();
@@ -50,7 +51,8 @@ function CustomModalUpdate(props) {
 
     function update(){
         if(props.client != name || props.price.toString() != priceFormatDb().toString() || props.service != service || props.date != serviceDate  ){
-            props.updateService(props.id, name,service,priceFormatDb(),moment(serviceDate).toDate())
+            const recivedDate = recived ? moment().toDate() : null  
+            props.updateService(props.id, name,service,priceFormatDb(),moment(serviceDate).toDate(),recivedDate)
         }else{
             alert(props.client + '   '+ props.service)
         }
@@ -87,6 +89,10 @@ function CustomModalUpdate(props) {
                     <Form.Field>
                         <label>Data do serviço:</label>
                         <input placeholder='Digite quando o serviço foi realizado' type={'date'}  onChange={e=> setDate(e.target.value)} value={serviceDate} required></input>
+                    </Form.Field> 
+                    <Form.Field>
+                        <label>Valor já recebido?</label>
+                        <Checkbox slider checked={recived} onChange={e=> setRecived(e.currentTarget.checked)}/>
                     </Form.Field> 
                 </Form>
             </Container>

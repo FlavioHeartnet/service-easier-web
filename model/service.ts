@@ -9,11 +9,13 @@ interface IService{
         service?:string,
         price?: number,
         serviceDate?: Date
+        recived?: Date
 }
 
 export default class Service extends BaseAdapter implements IService{
     
     static COLLECTION_NAME:string = 'service'
+    public recived?: Date
     constructor(public id?: string , public uid?: string,
         public name?: string,
         public service?:string,
@@ -31,11 +33,12 @@ export default class Service extends BaseAdapter implements IService{
                     name: service.name,
                     price: service.price,
                     serviceDate: service.serviceDate,
+                    recived: service.recived
                     };
             },
             fromFirestore: (snapshot, options) => {
                 const data = snapshot.data(options);
-                return new Service(data.uid,data.service,data.name,data.price,data.serviceDate);
+                return new Service(data.uid,data.service,data.name,data.price,data.serviceDate, data.recived);
             }
         };
     }
@@ -47,14 +50,17 @@ export default class Service extends BaseAdapter implements IService{
             name: this.name,
             price: this.price,
             serviceDate: new Date(this.serviceDate),
+            recived: this.recived,
             timestamp: serverTimestamp()
           }
         return this.insert(newService, Service.COLLECTION_NAME)
     }
 
     updateService(id:string):Promise<{message}>{
+        const service = new Service(id,this.uid,this.name,this.service,this.price,this.serviceDate)
+        service.recived = this.recived
         return this.update(
-            new Service(id,this.uid,this.name,this.service,this.price,this.serviceDate),
+            service,
             id,
             Service.COLLECTION_NAME,
             this.converter()) 
@@ -74,7 +80,8 @@ export default class Service extends BaseAdapter implements IService{
                 service: docService.service,
                 client: docService.name,
                 price: docService.price,
-                serviceDate: moment.unix(docService.serviceDate.seconds).toDate()
+                serviceDate: moment.unix(docService.serviceDate.seconds).toDate(),
+                recived: moment.unix(docService.recived.seconds).toDate()
             });
         });
         return services
