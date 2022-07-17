@@ -1,4 +1,4 @@
-import { Container, Dimmer, Loader, Segment, Grid, Icon} from 'semantic-ui-react'
+import { Container, Dimmer, Loader, Segment, Grid, Icon, GridColumn} from 'semantic-ui-react'
 import Header from './../components/header'
 import { useEffect, useState } from 'react'
 import {db} from './../firebase'
@@ -107,7 +107,8 @@ export default function ServiceList(){
                 <Segment vertical key={x}>
                     <Grid padded>
                     <Grid.Row columns={3}>
-                        <Icon color='pink' circular inverted size='large' name='dollar sign'/>
+                        {!recived ? <Icon color='pink' circular inverted size='large' name='dollar sign'/>:<Icon color='green' circular inverted size='large' name='check'/>}
+                        
                         <Grid.Column width={7}>
                             <span><b>{priceFormat(price,currentCurrency)}</b></span><br/>
                             <span style={{"color": "rgba(0,0,0,.4)"}}><b>{service}</b></span><br/>
@@ -129,7 +130,7 @@ export default function ServiceList(){
               
             </Container>
             </Header>
-            
+
             <br/>
         </div>
     )

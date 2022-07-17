@@ -109,7 +109,8 @@ export function AuthProvider({ children }: Props) {
                     service: docService.service,
                     name: docService.name,
                     price: docService.price,
-                    serviceDate: docService.serviceDate
+                    serviceDate: docService.serviceDate,
+                    recived: docService.recived
                 })    
             }
         })

@@ -51,6 +51,7 @@ function CustomModalUpdate(props) {
 
     function update(){
         if(props.client != name || props.price.toString() != priceFormatDb().toString() || props.service != service || props.date != serviceDate  ){
+            console.log(recived)
             const recivedDate = recived ? moment().toDate() : null  
             props.updateService(props.id, name,service,priceFormatDb(),moment(serviceDate).toDate(),recivedDate)
         }else{
@@ -92,7 +93,7 @@ function CustomModalUpdate(props) {
                     </Form.Field> 
                     <Form.Field>
                         <label>Valor já recebido?</label>
-                        <Checkbox slider checked={recived} onChange={e=> setRecived(e.currentTarget.checked)}/>
+                        <Checkbox slider checked={recived} onChange={(e,d)=> setRecived(d.checked)}/>
                     </Form.Field> 
                 </Form>
             </Container>
